@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plannerBenchmark xmlns="https://timefold.ai/xsd/benchmark"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="https://timefold.ai/xsd/benchmark https://timefold.ai/xsd/benchmark/benchmark.xsd">
+    <parallelBenchmarkCount>AUTO</parallelBenchmarkCount>
+
+    <inheritedSolverBenchmark>
+        <solver>
+            <solutionClass>com.optazen.skillmatch.domain.Schedule</solutionClass>
+            <entityClass>com.optazen.skillmatch.domain.Event</entityClass>
+            <scoreDirectorFactory>
+                <constraintProviderClass>com.optazen.skillmatch.solver.ScheduleConstraintProvider</constraintProviderClass>
+            </scoreDirectorFactory>
+            <termination>
+                <secondsSpentLimit>5</secondsSpentLimit>
+            </termination>
+        </solver>
+    </inheritedSolverBenchmark>
+
+<!--    <solverBenchmarkBluePrint>-->
+<!--        <solverBenchmarkBluePrintType>EVERY_CONSTRUCTION_HEURISTIC_TYPE_WITH_EVERY_LOCAL_SEARCH_TYPE</solverBenchmarkBluePrintType>-->
+<!--    </solverBenchmarkBluePrint>-->
+
+
+    <solverBenchmark>
+        <name>Default</name>
+        <solver>
+            <constructionHeuristic>
+                <constructionHeuristicType>FIRST_FIT</constructionHeuristicType>
+            </constructionHeuristic>
+            <localSearch>
+                <localSearchType>LATE_ACCEPTANCE</localSearchType>
+            </localSearch>
+        </solver>
+    </solverBenchmark>
+</plannerBenchmark>
