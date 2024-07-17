@@ -70,20 +70,20 @@ class ScheduleConstraintProviderTest {
         TimeBucket timeBucket2 = new TimeBucket();
         timeBucket2.setHours(8);
 
+        // place only event1 in the first time bucket
         event1.setTimeBucket(timeBucket);
-
         constraintVerifier.verifyThat(ScheduleConstraintProvider::overtime)
                 .given(event1, event2, timeBucket, timeBucket2)
                 .penalizesBy(0);
 
+        // place the second event in the other time buckets
         event2.setTimeBucket(timeBucket2);
-
         constraintVerifier.verifyThat(ScheduleConstraintProvider::overtime)
                 .given(event1, event2, timeBucket, timeBucket2)
                 .penalizesBy(0);
 
+        // overtime of 2h after placing both events in the same time bucket of 8h
         event2.setTimeBucket(timeBucket);
-
         constraintVerifier.verifyThat(ScheduleConstraintProvider::overtime)
                 .given(event1, event2, timeBucket, timeBucket2)
                 .penalizesBy(2);
