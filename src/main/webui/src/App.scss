@@ -1,4 +1,5 @@
 // import bryntum theme
+@import '@bryntum/demo-resources/scss/example-vite.scss';
 @import "@bryntum/schedulerpro/schedulerpro.stockholm.css";
 
 // Giving our scheduler some height
@@ -6,3 +7,42 @@
   height: 100vh;
 }
 
+#content {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+}
+
+.b-fa-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.b-unplanned-grid {
+  .b-grid-cell i {
+      font-size : 1.5em;
+  }
+
+  .name-container {
+      display             : flex;
+      flex-direction      : column;
+      margin-inline-start : 1em;
+      flex                : 1;
+  }
+
+  .vehicle-ct {
+      display        : flex;
+      flex-direction : column;
+      align-items    : center;
+      margin-inline  : 0.5em 0.25em;
+      width          : 4em;
+  } 
+}

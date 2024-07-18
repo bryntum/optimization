@@ -1,11 +1,111 @@
-import {BryntumSchedulerPro} from "@bryntum/schedulerpro-react";
-import {schedulerProps} from "./SchedulerConfig";
+import { useEffect, useState, useRef } from "react";
+import { BryntumDemoHeader, BryntumGrid, BryntumSchedulerPro, BryntumSplitter } from "@bryntum/schedulerpro-react";
+
+import { useSchedulerProConfig, unplannedGridConfig } from "./AppConfig";
+import Task from "./lib/Task.js";
+import Technician from "./lib/Technician.js";
+import Skill from "./lib/Skill.js";
+
 import "./App.scss";
 
 function App() {
+    const schedulerProRef = useRef();
+    const unplannedGridRef = useRef();
+
+    const [schedulerPro, setSchedulerPro] = useState();
+    const [unplannedGrid, setUnplannedGrid] = useState();
+
+    useEffect(() => {
+        setSchedulerPro(schedulerProRef.current?.instance);
+        setUnplannedGrid(unplannedGridRef.current?.instance);
+    }, [schedulerProRef, unplannedGridRef])
+
+    const onSolve = async () => {
+        if (!schedulerPro) return;
+
+        const response = await fetch('api/solve', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        // Trigger load call instead of setting data inline so unplannedGrid's store also get's refreshed
+        await schedulerPro.project.load();
+
+        schedulerPro.zoomToFit();
+    }
+
+    const onReset = async () => { if (!schedulerPro) return;
+        const response = await fetch('api/reset', {
+            method: 'POST'
+        })
+        if (!response.ok) {
+            throw new Error('Network Error. Unable to reset data')
+        }
+        
+        await schedulerPro.project.load();
+    }
+
+    const schedulerProConfig = useSchedulerProConfig(onSolve, onReset)
+
+    const [isProjectLoaded, setIsProjectLoaded] = useState(false);
+    const [projectConfig] = useState({
+        autoLoad: true,
+        loadUrl: 'api/read',
+        resourceStore: {
+            modelClass: Technician,
+            sorters: [{field: 'name', ascending: true}]
+        },
+        eventStore: {
+            modelClass: Task
+        },
+        crudStores: [
+            {
+                id: 'skills',
+                modelClass: Skill
+            },
+            {
+                id: 'unplanned',
+                modelClass: Task,
+                reapplySortersOnAdd: true
+            }
+        ],
+        onLoad: () => {
+            setIsProjectLoaded(true);
+        }
+    }) 
+
+    // Only called on initial page load to reset data
+    useEffect(() => {
+        onReset();
+    }, [])
+
+    // Called the first time when project has loaded data and unplannedGrid also exists
+    useEffect(() => {
+        if (!isProjectLoaded || !unplannedGrid) return;
+
+        unplannedGrid.store = schedulerPro.project.getCrudStore('unplanned');
+    }, [isProjectLoaded, unplannedGrid])
+
     return (
         <>
-            <BryntumSchedulerPro {...schedulerProps} />
+            <BryntumDemoHeader/>
+            <div id="content">
+                <BryntumSchedulerPro 
+                    ref={schedulerProRef}
+                    {...schedulerProConfig}
+                    project={projectConfig}
+                />
+                <BryntumSplitter/>
+                <BryntumGrid
+                    ref={unplannedGridRef}
+                    {...unplannedGridConfig}
+                />
+            </div>
         </>
     )
 }
