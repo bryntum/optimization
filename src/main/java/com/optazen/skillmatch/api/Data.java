@@ -22,6 +22,9 @@ public class Data {
     private Resources resources;
 
     private Unplanned unplanned;
+
+    private Skills skills;
+
     @JsonIgnore
     private List<TimeBucket> timeBuckets = new ArrayList<>();
     @JsonIgnore
@@ -53,7 +56,7 @@ public class Data {
         schedule.setTimeBuckets(timeBuckets);
 
         events.getRows().forEach(event -> event.setTimeBucket(findTimeBucket(event.getStartDate(), event.getResourceId())));
-        List<Event> combinedEvents = new ArrayList<Event>(events.getRows());
+        List<Event> combinedEvents = new ArrayList<>(events.getRows());
         unplanned.getRows().forEach(event -> event.setPinned(false));
         combinedEvents.addAll(unplanned.getRows());
         schedule.setEvents(combinedEvents);
@@ -150,6 +153,14 @@ public class Data {
 
     public void setCalendars(Calendars calendars) {
         this.calendars = calendars;
+    }
+
+    public Skills getSkills() {
+        return skills;
+    }
+
+    public void setSkills(Skills skills) {
+        this.skills = skills;
     }
 
     @Override

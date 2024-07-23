@@ -1,4 +1,4 @@
-package com.optazen.skillmatch;
+package com.optazen.skillmatch.rest;
 
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import ai.timefold.solver.core.api.solver.SolutionManager;
@@ -7,7 +7,7 @@ import ai.timefold.solver.core.api.solver.SolverManager;
 import com.optazen.skillmatch.api.Data;
 import com.optazen.skillmatch.bootstrap.StartupInitializer;
 import com.optazen.skillmatch.domain.Schedule;
-import com.optazen.skillmatch.persistence.ScheduleRepository;
+import com.optazen.skillmatch.persistence.DataRepository;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -29,8 +29,9 @@ public class ApiResource {
     SolverManager<Schedule, Long> solverManager;
     @Inject
     SolutionManager<Schedule, HardSoftScore> solutionManager;
+
     @Inject
-    ScheduleRepository scheduleRepository;
+    DataRepository dataRepository;
 
     @Inject
     StartupInitializer startupInitializer;
@@ -39,42 +40,41 @@ public class ApiResource {
     @Path("/update")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Schedule update(Data data) {
-        return scheduleRepository.update(data.getSchedule());
+    public Data update(Data data) {
+        return dataRepository.update(data);
     }
 
     @POST
     @Path("/reset")
     @Produces(MediaType.APPLICATION_JSON)
-    public Schedule reset() throws URISyntaxException, IOException {
+    public Data reset() throws URISyntaxException, IOException {
         return startupInitializer.data(new StartupEvent());
     }
 
     @POST
     @Path("/solve")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Data solve() {
+    public void solve() {
         // Submit the problem to start solving
-        Optional<Schedule> schedule = scheduleRepository.solution();
+        Optional<Data> data = dataRepository.solution();
         Schedule solution;
-        SolverJob<Schedule, Long> solverJob = solverManager.solve(SINGLETON_SCHEDULE_ID, schedule.orElseThrow());
+        SolverJob<Schedule, Long> solverJob = solverManager.solve(SINGLETON_SCHEDULE_ID, data.orElseThrow().getSchedule());
 
         try {
             // Wait until the solving ends
-            solution = scheduleRepository.update(solverJob.getFinalBestSolution());
+            solution = solverJob.getFinalBestSolution();
         } catch (InterruptedException | ExecutionException e) {
             throw new IllegalStateException("Solving failed.", e);
         }
 
         logger.info(String.valueOf(solutionManager.explain(solution)));
-        return new Data(solution);
+        dataRepository.update(solution);
     }
 
     @GET
     @Path("/read")
     @Produces(MediaType.APPLICATION_JSON)
-    public Data read() throws URISyntaxException, IOException {
-        return new Data(scheduleRepository.solution().orElseThrow());
+    public Data read() {
+        return dataRepository.solution().orElseThrow();
     }
 }
