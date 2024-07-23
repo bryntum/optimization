@@ -22,7 +22,7 @@ public class Event {
     @JsonIgnore
     private TimeBucket timeBucket;
     private LocalDateTime startDate;
-    private int resourceId;
+    private Integer resourceId;
 
     @PlanningPin
     @JsonIgnore
@@ -82,14 +82,14 @@ public class Event {
         this.startDate = startDate;
     }
 
-    public int getResourceId() {
+    public Integer getResourceId() {
         if (timeBucket == null) {
             return resourceId;
         }
         return timeBucket.getResource().getId();
     }
 
-    public void setResourceId(int resourceId) {
+    public void setResourceId(Integer resourceId) {
         this.resourceId = resourceId;
     }
 
