@@ -5,12 +5,14 @@ import { useSchedulerProConfig, unplannedGridConfig } from "./AppConfig";
 import Task from "./lib/Task.js";
 import Technician from "./lib/Technician.js";
 import Skill from "./lib/Skill.js";
+import Drag from "./lib/Drag.js";
 
 import "./App.scss";
 
 function App() {
     const schedulerProRef = useRef();
     const unplannedGridRef = useRef();
+    const dragRef = useRef();
 
     const [schedulerPro, setSchedulerPro] = useState();
     const [unplannedGrid, setUnplannedGrid] = useState();
@@ -90,6 +92,25 @@ function App() {
 
         unplannedGrid.store = schedulerPro.project.getCrudStore('unplanned');
     }, [isProjectLoaded, unplannedGrid])
+
+    // Attach a DragHelper to SchedulerPro and UnplannedGrid Instance
+    useEffect(() => {
+        if (!schedulerPro || !unplannedGrid) {
+            return;
+        }
+
+        dragRef.current = new Drag({
+            grid         : unplannedGrid,
+            schedule     : schedulerPro,
+            constrain    : false,
+            outerElement : unplannedGrid.element
+        });
+
+        // We need to destroy Drag instance because React 18 Strict mode
+        // runs this component twice in development mode and Drag has no
+        // UI so it is not destroyed automatically as grid and scheduler.
+        return () => dragRef.current?.destroy?.();
+    }, [unplannedGrid, schedulerPro, dragRef]);
 
     return (
         <>
