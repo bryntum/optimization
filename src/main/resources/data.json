@@ -8,6 +8,7 @@
       {
         "id": "workweek",
         "name": "Work week",
+        "unspecifiedTimeIsWorking": true,
         "intervals": [
           {
             "recurrentStartDate": "on Sat at 0:00",

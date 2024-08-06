@@ -26,6 +26,40 @@
   }
 }
 
+.b-resource-info {
+    .b-resource-avatar {
+        margin-inline : .4em 1em;
+        width         : 2.3em;
+        height        : 2.3em;
+    }
+
+    dl {
+        margin          : 0;
+        display         : flex;
+        justify-content : center;
+        flex-direction  : column;
+        flex            : 1;
+    }
+
+    dt {
+        font-weight : 500;
+    }
+
+    dd {
+        flex        : 1;
+        display     : flex;
+        align-items : center;
+    }
+
+    .b-resource-meta {
+        margin-top : 0.3em;
+
+        i {
+            margin-inline-end : 0.5em;
+        }
+    }
+}
+
 .b-unplanned-grid {
   .b-grid-cell i {
       font-size : 1.5em;
@@ -45,4 +79,177 @@
       margin-inline  : 0.5em 0.25em;
       width          : 4em;
   } 
+}
+
+.main-info {
+    display       : flex;
+    flex          : 1;
+    margin-bottom : 0.3em;
+
+    .task-name {
+        font-weight : 500;
+    }
+}
+
+.meta-info {
+    display        : flex;
+    flex-direction : row;
+    flex           : 1;
+    align-items    : center;
+    font-size      : .8em;
+}
+
+.licensePlate {
+    font-size   : 0.8em;
+    font-weight : 400;
+}
+
+.b-event-header {
+    margin-bottom : .2em;
+}
+
+.b-panel .b-panel-header.b-panel-ui-toolbar {
+    padding-inline : 1em;
+    min-height     : 4em;
+}
+
+ul.skills {
+    padding       : 0;
+    margin-block  : 0;
+    margin-inline : 0 auto;
+
+    li {
+        display           : inline-flex;
+        padding           : 0.2em 0.8em;
+        border-radius     : 1em;
+        font-size         : 0.8em;
+        margin-inline-end : 0.5em;
+        color             : #848abf;
+        list-style        : none;
+
+        i {
+            margin-inline-end : .5em;
+        }
+    }
+}
+
+body:not(.b-theme-classic-dark) {
+    ul.skills {
+        li {
+            background : #f1f6ff;
+        }
+    }
+}
+
+body.b-theme-classic-dark {
+    ul.skills {
+        li {
+            background : #6265d3;
+            color      : #eee;
+        }
+    }
+}
+
+.b-sch-event-wrap {
+    padding-inline : 0.18em;
+}
+
+.b-sch-event {
+    border-radius        : 0.4em;
+    --event-background-l : 85%;
+
+    .b-sch-event-content .b-fa {
+        display : none;
+    }
+}
+
+.b-sch-event-content {
+    display        : flex;
+    flex-direction : column;
+    flex           : 1;
+    font-size      : 15px;
+
+    .b-event-header {
+        display     : flex;
+        align-items : center;
+        flex        : 1;
+    }
+
+    .b-event-duration {
+        margin-inline-start : auto;
+        font-size           : .8em;
+
+    }
+
+    .b-sch-event:not(.b-sch-event-selected) & {
+        filter : brightness(.5);
+    }
+}
+
+[data-assignment-id*="_generated"] .sch-event {
+    opacity : 0.4;
+    filter  : grayscale(1);
+}
+
+.b-gridbase.b-split .b-grid-splitter:not(.b-disabled) {
+    flex : 0 0 1px;
+}
+
+.b-gridbase.b-split .b-grid-splitter:not(.b-disabled) .b-grid-splitter-inner {
+    width : 1px;
+}
+
+.b-timeranges-canvas .b-sch-nonworkingtime {
+    background-color : rgba(240, 240, 240, 0.3);
+}
+
+body:not(.b-theme-classic-dark) {
+    ul.skills {
+        li {
+            background : #f1f6ff;
+        }
+    }
+
+    .b-resource-info {
+        dt {
+            color : #222;
+        }
+    }
+
+    .b-grid-row.b-group-row {
+        border-bottom : 1px solid #e9eaeb;
+    }
+
+    .b-column-line {
+        border-color : #e9eaeb;
+    }
+
+    .b-sch-event-wrap {
+        &.b-sch-style-rounded > .b-sch-event {
+            --event-a : .4;
+        }
+    }
+
+    .b-schedulerpro {
+        border-inline-end : 1px solid #d8d9da;
+    }
+}
+
+body.b-theme-classic-dark {
+    ul.skills {
+        li {
+            background : #6265d3;
+            color      : #eee;
+        }
+    }
+
+    .b-sch-event-wrap {
+        &.b-sch-style-rounded > .b-sch-event {
+            --event-a : .85;
+        }
+    }
+
+    .b-schedulerpro {
+        border-inline-end : 2px solid #2b2b2f;
+    }
 }

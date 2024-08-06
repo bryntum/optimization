@@ -62,7 +62,49 @@ const useSchedulerProConfig = (onSolve, onReset) => {
             ]
         },
 
-        columns: [{text: 'Name', field: 'name', width: 130}],
+        columns: [
+            {
+                type           : 'resourceInfo',
+                text           : 'Staff',
+                width          : 300,
+                showEventCount : false,
+                // Show skills each technician has
+                showMeta(resourceRecord) {
+                    const
+                        { skillNames, role }   = resourceRecord,
+                        { startDate, endDate } = this.grid,
+                        bookedHours            = resourceRecord.getBookedHours(startDate, endDate),
+                        overAllocated          = bookedHours > resourceRecord.hoursPerWeek;
+
+                    return `<ul class="skills">${skillNames.map(skill => `<li>${StringHelper.encodeHtml(skill)}</li>`).join('')}</ul>
+                        <div data-btip="${bookedHours}h / ${resourceRecord.hoursPerWeek} allocated"><i class="b-fa ${overAllocated ? 'b-fa-triangle-exclamation' : 'b-fa-clock'}"></i>${bookedHours} / ${resourceRecord.hoursPerWeek}</div>`;
+                },
+                filterable : {
+                    filterField : {
+                        triggers : {
+                            search : {
+                                cls : 'b-icon b-fa-filter'
+                            }
+                        },
+                        placeholder : 'Staff'
+                    }
+                }
+            }
+        ],
+
+        eventRenderer({ eventRecord }) {
+            return `
+                <div>
+                    <div class="b-event-header">
+                        <div class="b-event-name">${eventRecord.name}</div>
+                        <div class="b-event-duration">${eventRecord.fullDuration.toString(true)}</div>
+                    </div>
+                    <div class="licensePlate">
+                        <div>Vehicle: ${eventRecord.licensePlate}</div>
+                    </div>
+                </div>
+            `
+        }
     }
 };
 
@@ -97,6 +139,7 @@ const unplannedGridConfig = {
                     </div>
                     <div class="name-container">
                         <div class="main-info"><span class="task-name">${StringHelper.encodeHtml(task.name)}</span></div>
+                        <div class="meta-info"><ul class="skills">${task.requiredSkillNames.map(skill => `<li data-btip="This task requires a technician with the following skills: <strong>${task.requiredSkillNames.join(', ')}</strong>">${skill}</li>`).join('')}</ul><span class="duration">${task.duration ? task.duration + 'h' : ''}</span></div>
                     </div>
                 `
         }
