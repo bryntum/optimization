@@ -8,6 +8,7 @@ import com.optazen.skillmatch.api.Data;
 import com.optazen.skillmatch.bootstrap.StartupInitializer;
 import com.optazen.skillmatch.domain.Schedule;
 import com.optazen.skillmatch.persistence.DataRepository;
+import com.optazen.skillmatch.websocket.TimefoldWebsocket;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -29,6 +30,9 @@ public class ApiResource {
     SolverManager<Schedule, Long> solverManager;
     @Inject
     SolutionManager<Schedule, HardSoftScore> solutionManager;
+
+    @Inject
+    TimefoldWebsocket timefoldWebsocket;
 
     @Inject
     DataRepository dataRepository;
@@ -58,7 +62,10 @@ public class ApiResource {
         // Submit the problem to start solving
         Optional<Data> data = dataRepository.solution();
         Schedule solution;
-        SolverJob<Schedule, Long> solverJob = solverManager.solve(SINGLETON_SCHEDULE_ID, data.orElseThrow().getSchedule());
+        SolverJob<Schedule, Long> solverJob = solverManager.solveAndListen(
+                SINGLETON_SCHEDULE_ID,
+                data.orElseThrow().getSchedule(),
+                this::newSolution);
 
         try {
             // Wait until the solving ends
@@ -69,6 +76,12 @@ public class ApiResource {
 
         logger.info(String.valueOf(solutionManager.explain(solution)));
         dataRepository.update(solution);
+    }
+
+    private void newSolution(Schedule schedule) {
+        dataRepository.update(schedule);
+        String event = "New Update " + LocalDateTime.now();
+        timefoldWebsocket.broadcast(event);
     }
 
     @GET

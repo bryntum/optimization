@@ -52,12 +52,32 @@ function App() {
         await schedulerPro.project.load();
     }
 
+    const openWebsocket = async() => { if (!schedulerPro) return;
+        const { protocol, hostname, port } = window.location;
+        const wsProtocol = protocol === 'https:' ? 'wss' : 'ws';
+        const wsPort = port ? `:${port}` : '';
+        const socket = new WebSocket(`${wsProtocol}://${hostname}${wsPort}/timefold`)
+
+        // Connection opened
+        socket.addEventListener("open", event => {
+            console.log("Connected with websocket")
+        });
+
+        // Listen for messages
+        socket.addEventListener("message", async event => {
+            console.log("Update from server ", event.data)
+            await schedulerPro.project.load();
+        });
+    }
+
     const schedulerProConfig = useSchedulerProConfig(onSolve, onReset)
 
     const [isProjectLoaded, setIsProjectLoaded] = useState(false);
     const [projectConfig] = useState({
         autoLoad: true,
+        autoSync: true,
         loadUrl: 'api/read',
+        syncUrl: 'api/sync',
         resourceStore: {
             modelClass: Technician,
             sorters: [{field: 'name', ascending: true}]
@@ -84,6 +104,7 @@ function App() {
     // Only called on initial page load to reset data
     useEffect(() => {
         onReset();
+        openWebsocket()
     }, [])
 
     // Called the first time when project has loaded data and unplannedGrid also exists
