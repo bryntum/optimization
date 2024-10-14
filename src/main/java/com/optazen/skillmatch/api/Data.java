@@ -16,14 +16,14 @@ public class Data {
     private boolean success = true;
     private Project project;
 
-    private Calendars calendars;
+    private Rows<Calendar> calendars;
 
-    private Events events;
-    private Resources resources;
+    private Rows<Event> events;
+    private Rows<Resource> resources;
 
-    private Unplanned unplanned;
+    private Rows<Event> unplanned;
 
-    private Skills skills;
+    private Rows<Skill> skills;
 
     @JsonIgnore
     private List<TimeBucket> timeBuckets = new ArrayList<>();
@@ -66,13 +66,13 @@ public class Data {
 
     public void setSchedule(Schedule schedule) {
         if(events == null) {
-            events = new Events();
+            events = new Rows<>();
         }
         if (unplanned == null) {
-            unplanned = new Unplanned();
+            unplanned = new Rows<>();
         }
         if (resources == null) {
-            resources = new Resources();
+            resources = new Rows<>();
         }
         this.resources.setRows(schedule.getTimeBuckets().stream().map(TimeBucket::getResource).distinct().collect(Collectors.toList()));
         this.events.setRows(schedule.getEvents().stream().filter(event -> event.getTimeBucket() != null).collect(Collectors.toList()));
@@ -83,27 +83,27 @@ public class Data {
         return this.timeBuckets.stream().filter(timeBucket -> startDate.toLocalDate().equals(timeBucket.getDate()) && resourceId == timeBucket.getResource().getId()).findFirst().orElse(null);
     }
 
-    public Events getEvents() {
+    public Rows<Event> getEvents() {
         return events;
     }
 
-    public void setEvents(Events events) {
+    public void setEvents(Rows<Event> events) {
         this.events = events;
     }
 
-    public Resources getResources() {
+    public Rows<Resource> getResources() {
         return resources;
     }
 
-    public void setResources(Resources resources) {
+    public void setResources(Rows<Resource> resources) {
         this.resources = resources;
     }
 
-    public Unplanned getUnplanned() {
+    public Rows<Event> getUnplanned() {
         return unplanned;
     }
 
-    public void setUnplanned(Unplanned unplanned) {
+    public void setUnplanned(Rows<Event> unplanned) {
         this.unplanned = unplanned;
     }
 
@@ -147,19 +147,19 @@ public class Data {
         this.endDate = endDate;
     }
 
-    public Calendars getCalendars() {
+    public Rows<Calendar> getCalendars() {
         return calendars;
     }
 
-    public void setCalendars(Calendars calendars) {
+    public void setCalendars(Rows<Calendar> calendars) {
         this.calendars = calendars;
     }
 
-    public Skills getSkills() {
+    public Rows<Skill> getSkills() {
         return skills;
     }
 
-    public void setSkills(Skills skills) {
+    public void setSkills(Rows<Skill> skills) {
         this.skills = skills;
     }
 

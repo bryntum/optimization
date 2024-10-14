@@ -86,4 +86,16 @@ public class Resource {
     public String toString() {
         return name + " (" + id + ")";
     }
+
+    public void update(Resource resourceUpdated) {
+        if (resourceUpdated.getName() != null) {
+            this.setName(resourceUpdated.getName());
+        }
+        if(resourceUpdated.getRole() != null) {
+            this.setRole(resourceUpdated.getRole());
+        }
+        if(resourceUpdated.getSkills() != null) {
+            this.setSkills(resourceUpdated.getSkills());
+        }
+    }
 }

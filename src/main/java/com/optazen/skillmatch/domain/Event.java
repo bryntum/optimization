@@ -15,7 +15,7 @@ public class Event {
     private int id;
     private String name;
     private String licensePlate;
-    private int duration;
+    private Integer duration;
     private List<Integer> skills;
 
     @PlanningVariable
@@ -55,11 +55,11 @@ public class Event {
         this.licensePlate = licensePlate;
     }
 
-    public int getDuration() {
+    public Integer getDuration() {
         return duration;
     }
 
-    public void setDuration(int duration) {
+    public void setDuration(Integer duration) {
         this.duration = duration;
     }
 
@@ -112,5 +112,17 @@ public class Event {
     @Override
     public String toString() {
         return "'" + name + " (" + id + ")' with " + timeBucket;
+    }
+
+    public void update(Event eventUpdated) {
+        if (eventUpdated.getStartDate() != null) {
+            this.setStartDate(eventUpdated.getStartDate());
+        }
+        if (eventUpdated.getDuration() != null) {
+            this.setDuration(eventUpdated.getDuration());
+        }
+        if(eventUpdated.getResourceId() != null) {
+            this.setResourceId(eventUpdated.getResourceId());
+        }
     }
 }
