@@ -5,11 +5,15 @@ import ai.timefold.solver.core.api.domain.entity.PlanningPin;
 import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 import ai.timefold.solver.core.api.domain.variable.PlanningVariable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.optazen.skillmatch.solver.EventDifficultyComparator;
+import com.optazen.skillmatch.solver.ResourceStrengthComparator;
+import jakarta.annotation.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@PlanningEntity
+@PlanningEntity(difficultyComparatorClass = EventDifficultyComparator.class)
 public class Event {
     @PlanningId
     private int id;
@@ -19,14 +23,16 @@ public class Event {
     private List<Integer> skills;
 
     @PlanningVariable
-    @JsonIgnore
-    private TimeBucket timeBucket;
     private LocalDateTime startDate;
+    @PlanningVariable(strengthComparatorClass = ResourceStrengthComparator.class)
+    private Resource resource;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Nullable
     private Integer resourceId;
 
     @PlanningPin
-    @JsonIgnore
-    private boolean pinned = true;
+    private boolean manuallyScheduled = false;
 
     public Event() {
     }
@@ -72,46 +78,41 @@ public class Event {
     }
 
     public LocalDateTime getStartDate() {
-        if (timeBucket == null) {
-            return startDate;
-        }
-        return timeBucket.getDate().atTime(8, 0);
+        return startDate;
     }
 
     public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
+    @JsonIgnore
+    public Resource getResource() {
+        return resource;
+    }
+
+    public void setResource(Resource resource) {
+        this.resource = resource;
+    }
+
     public Integer getResourceId() {
-        if (timeBucket == null) {
-            return resourceId;
-        }
-        return timeBucket.getResource().getId();
+        return (resource == null) ? resourceId : Integer.valueOf(resource.getId());
     }
 
     public void setResourceId(Integer resourceId) {
         this.resourceId = resourceId;
     }
 
-    public TimeBucket getTimeBucket() {
-        return timeBucket;
+    public boolean isManuallyScheduled() {
+        return manuallyScheduled;
     }
 
-    public void setTimeBucket(TimeBucket timeBucket) {
-        this.timeBucket = timeBucket;
-    }
-
-    public boolean isPinned() {
-        return pinned;
-    }
-
-    public void setPinned(boolean pinned) {
-        this.pinned = pinned;
+    public void setManuallyScheduled(boolean manuallyScheduled) {
+        this.manuallyScheduled = manuallyScheduled;
     }
 
     @Override
     public String toString() {
-        return "'" + name + " (" + id + ")' with " + timeBucket;
+        return "'" + name + " (" + id + ")' at " + startDate;
     }
 
     public void update(Event eventUpdated) {
@@ -124,5 +125,11 @@ public class Event {
         if(eventUpdated.getResourceId() != null) {
             this.setResourceId(eventUpdated.getResourceId());
         }
+        this.manuallyScheduled = eventUpdated.isManuallyScheduled();
+    }
+
+    @JsonIgnore
+    public LocalDateTime getEndDate() {
+        return startDate == null ? null : startDate.plusHours(duration);
     }
 }

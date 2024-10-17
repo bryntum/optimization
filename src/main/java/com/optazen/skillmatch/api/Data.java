@@ -1,13 +1,13 @@
 package com.optazen.skillmatch.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.optazen.skillmatch.domain.Event;
-import com.optazen.skillmatch.domain.Resource;
-import com.optazen.skillmatch.domain.Schedule;
-import com.optazen.skillmatch.domain.TimeBucket;
+import com.optazen.skillmatch.domain.*;
+import com.optazen.skillmatch.solver.ConstraintParameters;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,8 +26,6 @@ public class Data {
     private Rows<Skill> skills;
 
     @JsonIgnore
-    private List<TimeBucket> timeBuckets = new ArrayList<>();
-    @JsonIgnore
     private LocalDate startDate = LocalDate.of(2024, 11, 4);
     @JsonIgnore
     private LocalDate endDate = LocalDate.of(2024, 11, 9);
@@ -41,27 +39,41 @@ public class Data {
 
     @JsonIgnore
     public Schedule getSchedule() {
-        LocalDate currentDate = startDate;
-        int timeBucketCounter = 0;
-        int dayIndexCounter = 0;
-        while (endDate.isAfter(currentDate)) {
-            for (Resource resource : resources.getRows()) {
-                this.timeBuckets.add(new TimeBucket(timeBucketCounter++, resource, currentDate, 8, dayIndexCounter));
-            }
-            currentDate = currentDate.plusDays(1);
-            dayIndexCounter++;
-        }
-
         Schedule schedule = new Schedule();
-        schedule.setTimeBuckets(timeBuckets);
+        schedule.setConstraintParameters(new ConstraintParameters(startDate));
+        schedule.setResources(resources.getRows());
+        schedule.setStartDates(generateHourlyDateTimes(startDate, endDate, LocalTime.of(8,0), LocalTime.of(18,0)));
 
-        events.getRows().forEach(event -> event.setTimeBucket(findTimeBucket(event.getStartDate(), event.getResourceId())));
+        events.getRows().forEach(event -> event.setResource(findResource(event.getResourceId())));
         List<Event> combinedEvents = new ArrayList<>(events.getRows());
-        unplanned.getRows().forEach(event -> event.setPinned(false));
+        unplanned.getRows().forEach(event -> event.setManuallyScheduled(false));
         combinedEvents.addAll(unplanned.getRows());
         schedule.setEvents(combinedEvents);
 
         return schedule;
+    }
+
+    // Function to generate LocalDateTime for every hour, except for weekends
+    public static List<LocalDateTime> generateHourlyDateTimes(LocalDate startDate, LocalDate endDate,
+                                                              LocalTime startTimeMorning, LocalTime endTimeEvening) {
+        List<LocalDateTime> dateTimes = new ArrayList<>();
+
+        LocalDate currentDate = startDate;
+
+        // Loop through each day between start and end date
+        while (!currentDate.isAfter(endDate)) {
+            // Skip weekends (Saturday and Sunday)
+            if (!(currentDate.getDayOfWeek().getValue() == 6 || currentDate.getDayOfWeek().getValue() == 7)) {
+                // Loop through each hour between start time and end time
+                LocalTime currentTime = startTimeMorning;
+                while (!currentTime.isAfter(endTimeEvening)) {
+                    dateTimes.add(LocalDateTime.of(currentDate, currentTime));
+                    currentTime = currentTime.plusHours(1);  // Move forward by 1 hour
+                }
+            }
+            currentDate = currentDate.plusDays(1);  // Move to the next day
+        }
+        return dateTimes;
     }
 
     public void setSchedule(Schedule schedule) {
@@ -71,16 +83,12 @@ public class Data {
         if (unplanned == null) {
             unplanned = new Rows<>();
         }
-        if (resources == null) {
-            resources = new Rows<>();
-        }
-        this.resources.setRows(schedule.getTimeBuckets().stream().map(TimeBucket::getResource).distinct().collect(Collectors.toList()));
-        this.events.setRows(schedule.getEvents().stream().filter(event -> event.getTimeBucket() != null).collect(Collectors.toList()));
-        this.unplanned.setRows(schedule.getEvents().stream().filter(event -> event.getTimeBucket() == null).collect(Collectors.toList()));
+        this.events.setRows(schedule.getEvents().stream().filter(event -> event.getStartDate() != null).collect(Collectors.toList()));
+        this.unplanned.setRows(schedule.getEvents().stream().filter(event -> event.getStartDate() == null).collect(Collectors.toList()));
     }
 
-    private TimeBucket findTimeBucket(LocalDateTime startDate, int resourceId) {
-        return this.timeBuckets.stream().filter(timeBucket -> startDate.toLocalDate().equals(timeBucket.getDate()) && resourceId == timeBucket.getResource().getId()).findFirst().orElse(null);
+    private Resource findResource(int resourceId) {
+        return this.resources.getRows().stream().filter(resource -> resourceId == resource.getId()).findFirst().orElse(null);
     }
 
     public Rows<Event> getEvents() {
@@ -121,14 +129,6 @@ public class Data {
 
     public void setProject(Project project) {
         this.project = project;
-    }
-
-    public List<TimeBucket> getTimeBuckets() {
-        return timeBuckets;
-    }
-
-    public void setTimeBuckets(List<TimeBucket> timeBuckets) {
-        this.timeBuckets = timeBuckets;
     }
 
     public LocalDate getStartDate() {

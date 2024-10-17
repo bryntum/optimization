@@ -6,8 +6,12 @@ import ai.timefold.solver.core.api.score.stream.ConstraintFactory;
 import ai.timefold.solver.core.api.score.stream.ConstraintProvider;
 import ai.timefold.solver.core.api.score.stream.Joiners;
 import com.optazen.skillmatch.domain.Event;
+import com.optazen.skillmatch.domain.Resource;
 import com.optazen.skillmatch.domain.TimeBucket;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.function.Function;
 
 import static ai.timefold.solver.core.api.score.stream.ConstraintCollectors.sum;
@@ -17,6 +21,7 @@ public class ScheduleConstraintProvider implements ConstraintProvider {
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
         return new Constraint[] {
                 skillMatch(constraintFactory),
+                overlap(constraintFactory),
                 overtime(constraintFactory),
                 early(constraintFactory)
         };
@@ -24,25 +29,30 @@ public class ScheduleConstraintProvider implements ConstraintProvider {
 
     protected Constraint skillMatch(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(Event.class)
-                .filter(event -> !event.getTimeBucket().getResource().getSkills().containsAll(event.getSkills()))
+                .filter(event -> !event.getResource().getSkills().containsAll(event.getSkills()))
                 .penalize(HardSoftScore.ofHard(1))
                 .asConstraint("SkillMatch");
     }
 
+    protected Constraint overlap(ConstraintFactory constraintFactory) {
+        return constraintFactory.forEachUniquePair(Event.class,
+                        Joiners.equal(Event::getResource),
+                        Joiners.overlapping(Event::getStartDate, Event::getEndDate))
+                .penalize(HardSoftScore.ofHard(1))
+                .asConstraint("Overlap");
+    }
+
     protected Constraint overtime(ConstraintFactory constraintFactory) {
-        return constraintFactory.forEach(Event.class).
-                join(TimeBucket.class,
-                        Joiners.equal(Event::getTimeBucket, Function.identity()))
-                .groupBy((event, timeBucket) -> event.getTimeBucket(), sum((event, timeBucket) -> event.getDuration()))
-                .filter((timeBucket, duration) -> duration > timeBucket.getHours())
-                .penalize(HardSoftScore.ofHard(1), (timeBucket, duration) -> duration - timeBucket.getHours())
+        return constraintFactory.forEach(Event.class)
+                .filter(event -> event.getEndDate().isAfter(LocalDateTime.of(event.getStartDate().toLocalDate(), LocalTime.of(18, 0))))
+                .penalize(HardSoftScore.ofHard(1), event -> Math.toIntExact(ChronoUnit.HOURS.between(LocalDateTime.of(event.getStartDate().toLocalDate(), LocalTime.of(18, 0)), event.getEndDate())))
                 .asConstraint("Overtime");
     }
 
-    private Constraint early(ConstraintFactory constraintFactory) {
+    protected Constraint early(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(Event.class)
-                .filter(event -> event.getTimeBucket().getDayIndex() > 0)
-                .penalize(HardSoftScore.ofSoft(1), event -> event.getTimeBucket().getDayIndex())
+                .join(ConstraintParameters.class)
+                .penalize(HardSoftScore.ofSoft(1), (event, constraintParameters) -> Math.toIntExact(ChronoUnit.HOURS.between(LocalDateTime.of(constraintParameters.startDate(), LocalTime.of(8, 0)), event.getStartDate())))
                 .asConstraint("Early");
     }
 

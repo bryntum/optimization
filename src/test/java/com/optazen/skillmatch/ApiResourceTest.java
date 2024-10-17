@@ -16,7 +16,7 @@ class ApiResourceTest {
                 .contentType("application/json")
                 .post("/api/solve")
                 .then()
-                .statusCode(200);
+                .statusCode(204);
 
         given()
                 .when()

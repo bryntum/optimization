@@ -17,20 +17,20 @@
         </solver>
     </inheritedSolverBenchmark>
 
-<!--    <solverBenchmarkBluePrint>-->
-<!--        <solverBenchmarkBluePrintType>EVERY_CONSTRUCTION_HEURISTIC_TYPE_WITH_EVERY_LOCAL_SEARCH_TYPE</solverBenchmarkBluePrintType>-->
-<!--    </solverBenchmarkBluePrint>-->
+    <solverBenchmarkBluePrint>
+        <solverBenchmarkBluePrintType>EVERY_CONSTRUCTION_HEURISTIC_TYPE_WITH_EVERY_LOCAL_SEARCH_TYPE</solverBenchmarkBluePrintType>
+    </solverBenchmarkBluePrint>
 
 
-    <solverBenchmark>
-        <name>Default</name>
-        <solver>
-            <constructionHeuristic>
-                <constructionHeuristicType>FIRST_FIT</constructionHeuristicType>
-            </constructionHeuristic>
-            <localSearch>
-                <localSearchType>LATE_ACCEPTANCE</localSearchType>
-            </localSearch>
-        </solver>
-    </solverBenchmark>
+<!--    <solverBenchmark>-->
+<!--        <name>Default</name>-->
+<!--        <solver>-->
+<!--            <constructionHeuristic>-->
+<!--                <constructionHeuristicType>FIRST_FIT</constructionHeuristicType>-->
+<!--            </constructionHeuristic>-->
+<!--            <localSearch>-->
+<!--                <localSearchType>LATE_ACCEPTANCE</localSearchType>-->
+<!--            </localSearch>-->
+<!--        </solver>-->
+<!--    </solverBenchmark>-->
 </plannerBenchmark>

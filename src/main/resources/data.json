@@ -11,8 +11,8 @@
         "unspecifiedTimeIsWorking": true,
         "intervals": [
           {
-            "recurrentStartDate": "on Sat at 0:00",
-            "recurrentEndDate": "on Mon at 0:00",
+            "recurrentStartDate": "on Saturday at 0:00",
+            "recurrentEndDate": "on Monday at 0:00",
             "isWorking": false
           }
         ]
@@ -24,8 +24,8 @@
         "intervals": [
           {
             "name": "Available",
-            "recurrentStartDate": "every weekday at 08:00",
-            "recurrentEndDate": "every weekday at 18:00",
+            "recurrentStartDate": "on Monday, Tuesday, Wednesday, Thursday, Friday at 08:00",
+            "recurrentEndDate": "on Monday, Tuesday, Wednesday, Thursday, Friday at 18:00",
             "isWorking": true
           }
         ]

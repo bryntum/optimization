@@ -1,12 +1,11 @@
 package com.optazen.skillmatch.domain;
 
-import ai.timefold.solver.core.api.domain.solution.PlanningEntityCollectionProperty;
-import ai.timefold.solver.core.api.domain.solution.PlanningScore;
-import ai.timefold.solver.core.api.domain.solution.PlanningSolution;
-import ai.timefold.solver.core.api.domain.solution.ProblemFactCollectionProperty;
+import ai.timefold.solver.core.api.domain.solution.*;
 import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
+import com.optazen.skillmatch.solver.ConstraintParameters;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @PlanningSolution
@@ -15,7 +14,12 @@ public class Schedule {
     List<Event> events;
     @ValueRangeProvider
     @ProblemFactCollectionProperty
-    List<TimeBucket> timeBuckets;
+    List<Resource> resources;
+    @ValueRangeProvider
+    @ProblemFactCollectionProperty
+    List<LocalDateTime> startDates;
+    @ProblemFactProperty
+    ConstraintParameters constraintParameters;
 
     @PlanningScore
     private HardSoftScore score;
@@ -31,12 +35,16 @@ public class Schedule {
         this.events = events;
     }
 
-    public List<TimeBucket> getTimeBuckets() {
-        return timeBuckets;
+    public void setResources(List<Resource> resources) {
+        this.resources = resources;
     }
 
-    public void setTimeBuckets(List<TimeBucket> timeBuckets) {
-        this.timeBuckets = timeBuckets;
+    public void setStartDates(List<LocalDateTime> startDates) {
+        this.startDates = startDates;
+    }
+
+    public void setConstraintParameters(ConstraintParameters constraintParameters) {
+        this.constraintParameters = constraintParameters;
     }
 
     @Override
@@ -45,3 +53,4 @@ public class Schedule {
                 "events=" + events + "}";
     }
 }
+
