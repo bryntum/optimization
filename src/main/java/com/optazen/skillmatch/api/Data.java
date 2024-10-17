@@ -10,6 +10,7 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Data {
@@ -25,10 +26,11 @@ public class Data {
 
     private Rows<Skill> skills;
 
-    @JsonIgnore
-    private LocalDate startDate = LocalDate.of(2024, 11, 4);
-    @JsonIgnore
-    private LocalDate endDate = LocalDate.of(2024, 11, 9);
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private Set<Integer> workingDays;
+    private LocalTime startTime;
+    private LocalTime endTime;
 
     public Data() {
     }
@@ -40,9 +42,8 @@ public class Data {
     @JsonIgnore
     public Schedule getSchedule() {
         Schedule schedule = new Schedule();
-        schedule.setConstraintParameters(new ConstraintParameters(startDate));
+        schedule.setConstraintParameters(new ConstraintParameters(startDate, endDate, workingDays, startTime, endTime));
         schedule.setResources(resources.getRows());
-        schedule.setStartDates(generateHourlyDateTimes(startDate, endDate, LocalTime.of(8,0), LocalTime.of(18,0)));
 
         events.getRows().forEach(event -> event.setResource(findResource(event.getResourceId())));
         List<Event> combinedEvents = new ArrayList<>(events.getRows());
@@ -51,29 +52,6 @@ public class Data {
         schedule.setEvents(combinedEvents);
 
         return schedule;
-    }
-
-    // Function to generate LocalDateTime for every hour, except for weekends
-    public static List<LocalDateTime> generateHourlyDateTimes(LocalDate startDate, LocalDate endDate,
-                                                              LocalTime startTimeMorning, LocalTime endTimeEvening) {
-        List<LocalDateTime> dateTimes = new ArrayList<>();
-
-        LocalDate currentDate = startDate;
-
-        // Loop through each day between start and end date
-        while (!currentDate.isAfter(endDate)) {
-            // Skip weekends (Saturday and Sunday)
-            if (!(currentDate.getDayOfWeek().getValue() == 6 || currentDate.getDayOfWeek().getValue() == 7)) {
-                // Loop through each hour between start time and end time
-                LocalTime currentTime = startTimeMorning;
-                while (!currentTime.isAfter(endTimeEvening)) {
-                    dateTimes.add(LocalDateTime.of(currentDate, currentTime));
-                    currentTime = currentTime.plusHours(1);  // Move forward by 1 hour
-                }
-            }
-            currentDate = currentDate.plusDays(1);  // Move to the next day
-        }
-        return dateTimes;
     }
 
     public void setSchedule(Schedule schedule) {
@@ -145,6 +123,30 @@ public class Data {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    public Set<Integer> getWorkingDays() {
+        return workingDays;
+    }
+
+    public void setWorkingDays(Set<Integer> workingDays) {
+        this.workingDays = workingDays;
+    }
+
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
     }
 
     public Rows<Calendar> getCalendars() {

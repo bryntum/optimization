@@ -44,15 +44,16 @@ public class ScheduleConstraintProvider implements ConstraintProvider {
 
     protected Constraint overtime(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(Event.class)
-                .filter(event -> event.getEndDate().isAfter(LocalDateTime.of(event.getStartDate().toLocalDate(), LocalTime.of(18, 0))))
-                .penalize(HardSoftScore.ofHard(1), event -> Math.toIntExact(ChronoUnit.HOURS.between(LocalDateTime.of(event.getStartDate().toLocalDate(), LocalTime.of(18, 0)), event.getEndDate())))
+                .join(ConstraintParameters.class)
+                .filter((event, constraintParameters) -> event.getEndDate().isAfter(LocalDateTime.of(event.getStartDate().toLocalDate(), constraintParameters.endTime())))
+                .penalize(HardSoftScore.ofHard(1), (event, constraintParameters) -> Math.toIntExact(ChronoUnit.HOURS.between(LocalDateTime.of(event.getStartDate().toLocalDate(), constraintParameters.endTime()), event.getEndDate())))
                 .asConstraint("Overtime");
     }
 
     protected Constraint early(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(Event.class)
                 .join(ConstraintParameters.class)
-                .penalize(HardSoftScore.ofSoft(1), (event, constraintParameters) -> Math.toIntExact(ChronoUnit.HOURS.between(LocalDateTime.of(constraintParameters.startDate(), LocalTime.of(8, 0)), event.getStartDate())))
+                .penalize(HardSoftScore.ofSoft(1), (event, constraintParameters) -> Math.toIntExact(ChronoUnit.HOURS.between(LocalDateTime.of(constraintParameters.startDate(), constraintParameters.startTime()), event.getStartDate())))
                 .asConstraint("Early");
     }
 
