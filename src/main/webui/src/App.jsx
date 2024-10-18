@@ -37,8 +37,6 @@ function App() {
 
         // Trigger load call instead of setting data inline so unplannedGrid's store also get's refreshed
         await schedulerPro.project.load();
-
-        schedulerPro.zoomToFit();
     }
 
     const onReset = async () => { if (!schedulerPro) return;
