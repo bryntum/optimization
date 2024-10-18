@@ -157,7 +157,8 @@
           4,
           5
         ],
-        "startDate": "2024-11-04T08:00:00"
+        "startDate": "2024-11-04T08:00:00",
+        "manuallyScheduled": true
       },
       {
         "id": 2,
@@ -168,7 +169,8 @@
         "skills": [
           1
         ],
-        "startDate": "2024-11-04T10:00:00"
+        "startDate": "2024-11-04T10:00:00",
+        "manuallyScheduled": true
       },
       {
         "id": 3,
@@ -179,7 +181,8 @@
         "skills": [
           5
         ],
-        "startDate": "2024-11-04T11:00:00"
+        "startDate": "2024-11-04T11:00:00",
+        "manuallyScheduled": true
       },
       {
         "id": 4,
@@ -190,7 +193,8 @@
         "skills": [
           1
         ],
-        "startDate": "2024-11-05T08:00:00"
+        "startDate": "2024-11-05T08:00:00",
+        "manuallyScheduled": true
       },
       {
         "id": 5,
@@ -202,7 +206,8 @@
           2,
           4
         ],
-        "startDate": "2024-11-05T10:00:00"
+        "startDate": "2024-11-05T10:00:00",
+        "manuallyScheduled": true
       },
       {
         "id": 6,
@@ -213,7 +218,8 @@
         "skills": [
           7
         ],
-        "startDate": "2024-11-05T11:00:00"
+        "startDate": "2024-11-05T11:00:00",
+        "manuallyScheduled": true
       },
       {
         "id": 7,
@@ -224,7 +230,8 @@
         "skills": [
           1
         ],
-        "startDate": "2024-11-06T08:00:00"
+        "startDate": "2024-11-06T08:00:00",
+        "manuallyScheduled": true
       },
       {
         "id": 8,
@@ -235,7 +242,8 @@
         "skills": [
           1
         ],
-        "startDate": "2024-11-06T10:00:00"
+        "startDate": "2024-11-06T10:00:00",
+        "manuallyScheduled": true
       },
       {
         "id": 9,
@@ -246,7 +254,8 @@
         "skills": [
           4
         ],
-        "startDate": "2024-11-06T11:00:00"
+        "startDate": "2024-11-06T11:00:00",
+        "manuallyScheduled": true
       },
       {
         "id": 10,
@@ -257,7 +266,8 @@
         "skills": [
           1
         ],
-        "startDate": "2024-11-07T08:00:00"
+        "startDate": "2024-11-07T08:00:00",
+        "manuallyScheduled": true
       },
       {
         "id": 11,
@@ -268,7 +278,8 @@
         "skills": [
           9
         ],
-        "startDate": "2024-11-07T10:00:00"
+        "startDate": "2024-11-07T10:00:00",
+        "manuallyScheduled": true
       },
       {
         "id": 12,
@@ -279,7 +290,8 @@
         "skills": [
           8
         ],
-        "startDate": "2024-11-07T11:00:00"
+        "startDate": "2024-11-07T11:00:00",
+        "manuallyScheduled": true
       },
       {
         "id": 13,
@@ -290,7 +302,8 @@
         "skills": [
           5
         ],
-        "startDate": "2024-11-08T08:00:00"
+        "startDate": "2024-11-08T08:00:00",
+        "manuallyScheduled": true
       },
       {
         "id": 14,
@@ -301,7 +314,8 @@
         "skills": [
           1
         ],
-        "startDate": "2024-11-08T10:00:00"
+        "startDate": "2024-11-08T10:00:00",
+        "manuallyScheduled": true
       },
       {
         "id": 15,
@@ -312,7 +326,8 @@
         "skills": [
           2
         ],
-        "startDate": "2024-11-08T11:00:00"
+        "startDate": "2024-11-08T11:00:00",
+        "manuallyScheduled": true
       }
     ]
   },
