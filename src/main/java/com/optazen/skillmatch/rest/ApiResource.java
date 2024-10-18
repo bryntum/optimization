@@ -4,6 +4,7 @@ import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import ai.timefold.solver.core.api.solver.SolutionManager;
 import ai.timefold.solver.core.api.solver.SolverJob;
 import ai.timefold.solver.core.api.solver.SolverManager;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.optazen.skillmatch.api.Crud;
 import com.optazen.skillmatch.api.Data;
 import com.optazen.skillmatch.api.Sync;
@@ -24,11 +25,9 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 
 @Path("/api")
@@ -50,6 +49,9 @@ public class ApiResource {
     @Inject
     StartupInitializer startupInitializer;
 
+    @Inject
+    ObjectMapper objectMapper;
+
 
     @POST
     @Path("/update")
@@ -65,30 +67,33 @@ public class ApiResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response sync(Sync sync) {
         boolean allSucceded = true;
+        List<Event> unplannedEvents = new ArrayList<>();
         Crud<Event> events = sync.getEvents();
         if (events != null) {
             allSucceded &= events.getUpdated().stream().allMatch(event -> dataRepository.update(event));
-            allSucceded &= events.getDeleted().stream().allMatch(eventId -> dataRepository.deleteEvent(eventId));
+            allSucceded &= events.getRemoved().stream().allMatch(event -> dataRepository.deleteEvent(event.getId()));
             events.getAdded().forEach(event -> logger.error("Adding Events is not yet implemented"));
         }
 
         Crud<Resource> resources = sync.getResources();
         if (resources != null) {
             allSucceded &= resources.getUpdated().stream().allMatch(resource -> dataRepository.update(resource));
-            // TODO: How to move events from the deleted resource to unplanned?
-            allSucceded &= resources.getDeleted().stream().allMatch(resourceId -> dataRepository.deleteResource(resourceId));
+            unplannedEvents = resources.getRemoved().stream().map(resource -> dataRepository.deleteResource(resource.getId())).flatMap(Collection::stream).toList();
             resources.getAdded().forEach(event -> logger.error("Adding Resources is not yet implemented"));
         }
 
-        Map<String, Object> root = new HashMap<>();
-        root.put("success", allSucceded);
-        root.put("requestId", sync.getRequestId());
+        Map<String, Object> jsonResponseObject = new HashMap<>();
+        jsonResponseObject.put("success", allSucceded);
+        jsonResponseObject.put("requestId", sync.getRequestId());
 
-        // TODO: What needs to be sent back with the current functionality? e.g. new unplanned events because of resource deletion?
-//        root.put("events", createEvents());
-//        root.put("resources", createAssignments());
+        if (!unplannedEvents.isEmpty()) {
+            jsonResponseObject.put("unplanned", Collections.singletonMap("rows",
+                    unplannedEvents.stream()
+                            .map(event -> objectMapper.convertValue(event, Map.class))
+                            .collect(Collectors.toList())));
+        }
 
-        return allSucceded ? Response.ok(root).build() : Response.serverError().build();
+        return allSucceded ? Response.ok(jsonResponseObject).build() : Response.serverError().build();
     }
 
     private Map<String, Object> createSection(String phantomId, String id) {
@@ -99,8 +104,6 @@ public class ApiResource {
         }}));
         return section;
     }
-
-
 
     @POST
     @Path("/reset")
@@ -135,7 +138,7 @@ public class ApiResource {
     private void newSolution(Schedule schedule) {
         dataRepository.update(schedule);
         String event = "New Update " + LocalDateTime.now();
-        timefoldWebsocket.broadcast(event);
+        timefoldWebsocket.setLatestEvent(event);
     }
 
     @GET

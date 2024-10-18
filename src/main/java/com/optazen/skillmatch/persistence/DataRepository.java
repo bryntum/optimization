@@ -6,9 +6,7 @@ import com.optazen.skillmatch.domain.Resource;
 import com.optazen.skillmatch.domain.Schedule;
 import jakarta.enterprise.context.ApplicationScoped;
 
-import java.util.ListIterator;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @ApplicationScoped
 public class DataRepository {
@@ -52,25 +50,27 @@ public class DataRepository {
         }
     }
 
-    public boolean deleteResource(Integer resourceId) {
+    public List<Event> deleteResource(Integer resourceId) {
+        List<Event> unplannedEventsForResource = new ArrayList<>();
         ListIterator<Resource> iterator = this.data.getResources().getRows().listIterator();
         while (iterator.hasNext()) {
             Resource resource = iterator.next();
             if (resource.getId() == resourceId) {
                 // Unplan events => no resource id + no start date / time
-                this.data.getEvents().getRows().stream().filter(event -> Objects.equals(event.getResourceId(), resourceId)).forEach(event -> {
+                this.data.getEvents().getRows().stream().filter(event -> Objects.equals(event.getResource().getId(), resourceId)).forEach(event -> {
                     event.setResourceId(null);
                     event.setStartDate(null);
                     this.data.getUnplanned().getRows().add(event);
+                    unplannedEventsForResource.add(event);
                 });
 
                 this.data.getEvents().getRows().removeIf(event -> Objects.equals(event.getResourceId(), resourceId));
 
                 iterator.remove();
-                return true;
+                return unplannedEventsForResource;
             }
         }
 
-        return false;
+        return unplannedEventsForResource;
     }
 }

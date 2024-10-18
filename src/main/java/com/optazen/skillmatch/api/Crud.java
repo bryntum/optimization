@@ -6,7 +6,7 @@ import java.util.List;
 public class Crud<T> {
     private List<T> added = new ArrayList<>();
     private List<T> updated = new ArrayList<>();
-    private List<Integer> deleted = new ArrayList<>();
+    private List<T> removed = new ArrayList<>();
 
     public Crud() {
     }
@@ -27,11 +27,11 @@ public class Crud<T> {
         this.updated = updated;
     }
 
-    public List<Integer> getDeleted() {
-        return deleted;
+    public List<T> getRemoved() {
+        return removed;
     }
 
-    public void setDeleted(List<Integer> deleted) {
-        this.deleted = deleted;
+    public void setRemoved(List<T> removed) {
+        this.removed = removed;
     }
 }
