@@ -1,13 +1,14 @@
 package com.optazen.skillmatch.api;
 
+import ai.timefold.solver.core.api.score.analysis.ScoreAnalysis;
+import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.optazen.skillmatch.domain.*;
 import com.optazen.skillmatch.solver.ConstraintParameters;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +32,8 @@ public class Data {
     private Set<Integer> workingDays;
     private LocalTime startTime;
     private LocalTime endTime;
+    @JsonIgnore
+    private ScoreAnalysis<HardSoftScore> scoreAnalysis;
 
     public Data() {
     }
@@ -163,6 +166,16 @@ public class Data {
 
     public void setSkills(Rows<Skill> skills) {
         this.skills = skills;
+    }
+
+    @JsonIgnore
+    public void setScoreAnalysis(ScoreAnalysis<HardSoftScore> scoreAnalysis) {
+        this.scoreAnalysis = scoreAnalysis;
+    }
+
+    @JsonProperty
+    public ScoreAnalysis<HardSoftScore> getScoreAnalysis() {
+        return scoreAnalysis;
     }
 
     @Override

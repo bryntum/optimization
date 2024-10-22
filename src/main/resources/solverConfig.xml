@@ -10,7 +10,8 @@
         <initializingScoreTrend>ONLY_DOWN</initializingScoreTrend>
     </scoreDirectorFactory>
     <termination>
-        <secondsSpentLimit>5</secondsSpentLimit>
+        <!-- Fine tune termination based on data set size -->
+        <unimprovedSecondsSpentLimit>2</unimprovedSecondsSpentLimit>
     </termination>
     <constructionHeuristic>
         <constructionHeuristicType>FIRST_FIT_DECREASING</constructionHeuristicType>

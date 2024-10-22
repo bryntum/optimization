@@ -54,7 +54,6 @@ public class Schedule {
         return dateTimes;
     }
 
-
     public List<Event> getEvents() {
         return events;
     }

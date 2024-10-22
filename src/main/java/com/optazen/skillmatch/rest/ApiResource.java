@@ -1,5 +1,6 @@
 package com.optazen.skillmatch.rest;
 
+import ai.timefold.solver.core.api.score.analysis.ScoreAnalysis;
 import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
 import ai.timefold.solver.core.api.solver.SolutionManager;
 import ai.timefold.solver.core.api.solver.SolverJob;
@@ -13,6 +14,7 @@ import com.optazen.skillmatch.domain.Event;
 import com.optazen.skillmatch.domain.Resource;
 import com.optazen.skillmatch.domain.Schedule;
 import com.optazen.skillmatch.persistence.DataRepository;
+import com.optazen.skillmatch.service.ScoreAnalysisService;
 import com.optazen.skillmatch.websocket.TimefoldWebsocket;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.inject.Inject;
@@ -52,6 +54,8 @@ public class ApiResource {
     @Inject
     ObjectMapper objectMapper;
 
+    @Inject
+    ScoreAnalysisService scoreAnalysisService;
 
     @POST
     @Path("/update")
@@ -133,6 +137,12 @@ public class ApiResource {
 
         logger.info(String.valueOf(solutionManager.explain(solution)));
         dataRepository.update(solution);
+    }
+
+    @GET
+    @Path("/scoreAnalysis")
+    public ScoreAnalysis<HardSoftScore> scoreAnalysis() {
+        return scoreAnalysisService.analysis(dataRepository.solution().orElseThrow().getSchedule());
     }
 
     private void newSolution(Schedule schedule) {

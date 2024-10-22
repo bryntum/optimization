@@ -4,7 +4,9 @@ import com.optazen.skillmatch.api.Data;
 import com.optazen.skillmatch.domain.Event;
 import com.optazen.skillmatch.domain.Resource;
 import com.optazen.skillmatch.domain.Schedule;
+import com.optazen.skillmatch.service.ScoreAnalysisService;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import java.util.*;
 
@@ -12,17 +14,22 @@ import java.util.*;
 public class DataRepository {
     private Data data;
 
+    @Inject
+    ScoreAnalysisService scoreAnalysisService;
+
     public Optional<Data> solution() {
         return Optional.ofNullable(data);
     }
 
     public Data update(Data data) {
         this.data = data;
+        this.data.setScoreAnalysis(scoreAnalysisService.analysis(data.getSchedule()));
         return data;
     }
 
     public Data update(Schedule schedule) {
         this.data.setSchedule(schedule);
+        update(data);
         return data;
     }
 
