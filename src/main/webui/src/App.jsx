@@ -50,7 +50,9 @@ function App() {
         await schedulerPro.project.load();
     }
 
-    const openWebsocket = async() => { if (!schedulerPro) return;
+    const openWebsocket = async() => { 
+        if (!schedulerPro) return;
+
         const { protocol, hostname, port } = window.location;
         const wsProtocol = protocol === 'https:' ? 'wss' : 'ws';
         const wsPort = port ? `:${port}` : '';
@@ -102,8 +104,12 @@ function App() {
     // Only called on initial page load to reset data
     useEffect(() => {
         onReset();
-        openWebsocket()
     }, [])
+
+    // Setup websocket as soon as schedulerPro is available
+    useEffect(() => {
+        openWebsocket()
+    }, [schedulerPro])
 
     // Called the first time when project has loaded data and unplannedGrid also exists
     useEffect(() => {

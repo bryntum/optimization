@@ -56,7 +56,6 @@ public class TimefoldWebsocket {
         latestEvent.set(event);
     }
 
-
     public void broadcast(String message) {
         logger.info("Sending message %s to %s clients".formatted(message, sessions.size()));
         sessions.forEach(s -> {
