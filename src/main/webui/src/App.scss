@@ -99,9 +99,14 @@
     font-size      : .8em;
 }
 
-.licensePlate {
+.license-plate {
+    display     : inline-block;
     font-size   : 0.8em;
     font-weight : 400;
+}
+
+.manually-scheduled {
+    float : right;
 }
 
 .b-event-header {
@@ -147,6 +152,56 @@ body.b-theme-classic-dark {
             background : #6265d3;
             color      : #eee;
         }
+    }
+}
+
+.b-sch-event-tooltip {
+    max-width : none;
+    max-width : 45em;
+
+    .b-panel-content {
+        display               : grid;
+        grid-template-columns : 15em auto;
+        grid-column-gap       : 2em;
+        grid-row-gap          : 2em;
+    }
+
+    .field {
+        display        : flex;
+        flex-direction : column;
+        font-weight    : 500;
+
+        label {
+            margin-bottom : 0.5em;
+            color         : #888;
+        }
+    }
+    
+    ul {
+        white-space : nowrap;
+    }
+
+    .b-panel-content {
+        padding : 1.5em !important;
+        margin  : 0 !important;
+    }
+
+    strong {
+        display       : block;
+        margin-bottom : 0.5em;
+    }
+
+    .b-tooltip-section {
+        i {
+            margin-inline-end : .5em;
+        }
+    }
+}
+
+.b-popup.b-tooltip {
+    &,
+    > .b-panel-body-wrap > .b-panel-content {
+        border-radius : .5em !important;
     }
 }
 

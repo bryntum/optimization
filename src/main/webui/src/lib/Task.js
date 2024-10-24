@@ -8,20 +8,21 @@ export default class Task extends EventModel {
         { name : 'licensePlate', defaultValue : '' },
         // The skills required to perform a task
         { name : 'skills', type : 'array' },
+        { name : 'manuallyScheduled', type : 'boolean' },
         { name : 'duration', defaultValue : 1 },
         { name : 'durationUnit', defaultValue : 'h' },
-            {
-                name : 'startDate',
-                serialize(value) {
-                    return value.toISOString();
-                }
-            },
-            {
-                name : 'endDate',
-                serialize(value) {
-                    return value.toISOString();
-                }
+        {
+            name : 'startDate',
+            serialize(value) {
+                return value.toISOString();
             }
+        },
+        {
+            name : 'endDate',
+            serialize(value) {
+                return value.toISOString();
+            }
+        },
     ];
 
     get requiredSkillRecords() {

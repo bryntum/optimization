@@ -1,4 +1,4 @@
-import { StringHelper } from "@bryntum/schedulerpro";
+import { StringHelper, DateHelper } from "@bryntum/schedulerpro";
 
 /**
  * Application configuration
@@ -103,6 +103,17 @@ const useSchedulerProConfig = (onSolve, onReset) => {
             }
         ],
 
+        eventTooltipFeature : {
+            template({ eventRecord }) {
+                return `<div class="field"><label>Task</label><span>${StringHelper.encodeHtml(eventRecord.name)}</span></div>
+                    <div class="field"><label>Required skills</label><ul class="skills">${eventRecord.requiredSkillNames.map(skill => `<li>${skill}</li>`).join('')}</ul></div>
+                    <div class="field"><label>Start</label><span>${DateHelper.format(eventRecord.startDate, 'MMM DD LST')}</span></div>
+                    <div class="field"><label>Duration</label><span>${eventRecord.fullDuration}</span></div>
+                    <div class="field"><label>Assigned to</label><span>${StringHelper.encodeHtml(eventRecord.resource.name)}</span></div>
+                    <div class="field"><label>Manually Assigned</label><span>${eventRecord.manuallyScheduled ? 'Yes' : 'No'}</span></div>
+                `;
+            }
+        },
         eventRenderer({ eventRecord }) {
             return `
                 <div>
@@ -110,9 +121,10 @@ const useSchedulerProConfig = (onSolve, onReset) => {
                         <div class="b-event-name">${eventRecord.name}</div>
                         <div class="b-event-duration">${eventRecord.fullDuration.toString(true)}</div>
                     </div>
-                    <div class="licensePlate">
+                    <div class="license-plate">
                         <div>Vehicle: ${eventRecord.licensePlate}</div>
                     </div>
+                    ${eventRecord.manuallyScheduled ? '<div class="manually-scheduled">M</div>' : ''}
                 </div>
             `
         }
@@ -146,7 +158,7 @@ const unplannedGridConfig = {
             renderer   : ({ record : task }) => `
                     <div class="vehicle-ct">
                         <i class="${StringHelper.encodeHtml(task.iconCls) || ''}"></i>
-                        <span class="licensePlate">${StringHelper.encodeHtml(task.licensePlate)}</span>
+                        <span class="license-plate">${StringHelper.encodeHtml(task.licensePlate)}</span>
                     </div>
                     <div class="name-container">
                         <div class="main-info"><span class="task-name">${StringHelper.encodeHtml(task.name)}</span></div>
