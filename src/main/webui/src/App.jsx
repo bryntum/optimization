@@ -131,6 +131,15 @@ function App() {
         return () => dragRef.current?.destroy?.();
     }, [unplannedGrid, schedulerPro, dragRef]);
 
+    // Highlight resources which can perform selected task when task is selected in unplannedGrid 
+    useEffect(() => {
+        if (!unplannedGrid || !schedulerPro) return;
+
+        unplannedGrid.on('selectionchange', ({ selected }) => {
+            schedulerPro.highlightResourceCalendarsForEventRecords(selected);
+        });
+    }, [unplannedGrid, schedulerPro])
+
     return (
         <>
             <BryntumDemoHeader/>

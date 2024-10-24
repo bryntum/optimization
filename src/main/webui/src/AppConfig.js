@@ -50,6 +50,17 @@ const useSchedulerProConfig = (onSolve, onReset) => {
             },
         ],
 
+        calendarHighlightFeature: {
+            calendar : 'resource',
+            inflate  : {
+                x : -8,
+                y : -1
+            },
+            collectAvailableResources({ scheduler, eventRecords }) {
+                return scheduler.resourceStore.query(technician => technician.canPerformTask(eventRecords[0]));
+            }
+        },
+
         viewPreset: {
             base: 'dayAndWeek',
             shiftUnit: 'week',
