@@ -123,22 +123,12 @@ public class ApiResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public void solve() {
         // Submit the problem to start solving
-        Optional<Data> data = dataRepository.solution();
-        Schedule solution;
-        SolverJob<Schedule, Long> solverJob = solverManager.solveAndListen(
-                SINGLETON_SCHEDULE_ID,
-                data.orElseThrow().getSchedule(),
-                this::newSolution);
-
-        try {
-            // Wait until the solving ends
-            solution = solverJob.getFinalBestSolution();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new IllegalStateException("Solving failed.", e);
-        }
-
-        logger.info(String.valueOf(solutionManager.explain(solution)));
-        dataRepository.update(solution);
+        SolverJob<Schedule, Long> solverJob = solverManager.solveBuilder()
+                .withProblemId(SINGLETON_SCHEDULE_ID)
+                .withProblem(dataRepository.solution().orElseThrow().getSchedule())
+                .withBestSolutionConsumer(this::newSolution)
+                .withFinalBestSolutionConsumer(this::bestSolution)
+                .run();
     }
 
     @GET
@@ -149,8 +139,12 @@ public class ApiResource {
 
     private void newSolution(Schedule schedule) {
         dataRepository.update(schedule);
-        String event = "New Update " + LocalDateTime.now();
-        timefoldWebsocket.setLatestEvent(event);
+        timefoldWebsocket.setLatestEvent("New Update " + LocalDateTime.now());
+    }
+
+    private void bestSolution(Schedule schedule) {
+        dataRepository.update(schedule);
+        timefoldWebsocket.setLatestEvent("Finished " + LocalDateTime.now());
     }
 
     @GET

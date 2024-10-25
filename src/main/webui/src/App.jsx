@@ -66,6 +66,9 @@ function App() {
         // Listen for messages
         socket.addEventListener("message", async event => {
             console.log("Update from server ", event.data)
+            if(event.data.startsWith("Finished")) {
+                console.log("Done solving");
+            }
             await schedulerPro.project.load();
         });
     }
