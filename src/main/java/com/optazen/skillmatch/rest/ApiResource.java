@@ -97,6 +97,8 @@ public class ApiResource {
                             .collect(Collectors.toList())));
         }
 
+        jsonResponseObject.put("scoreAnalysis", scoreAnalysisService.analysis(dataRepository.solution().orElseThrow().getSchedule()));
+
         return allSucceded ? Response.ok(jsonResponseObject).build() : Response.serverError().build();
     }
 
