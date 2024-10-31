@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 @ApplicationScoped
 public class DataRepository {
@@ -18,6 +20,8 @@ public class DataRepository {
     @Inject
     ScoreAnalysisService scoreAnalysisService;
     private Data data;
+    private static AtomicInteger counter;
+
 
     public Optional<Data> solution() {
         return Optional.ofNullable(data);
@@ -25,6 +29,8 @@ public class DataRepository {
 
     public Data update(Data data) {
         this.data = data;
+        Optional<Integer> max = Stream.concat(data.getEvents().getRows().stream(), data.getUnplanned().getRows().stream()).map(Event::getId).max(Integer::compareTo);
+        counter = new AtomicInteger(max.map(i -> i + 1).orElse(0));
         this.data.setScoreAnalysis(scoreAnalysisService.analysis(data.getSchedule()));
         return data;
     }
@@ -43,6 +49,23 @@ public class DataRepository {
         } else {
             return false;
         }
+    }
+
+    public Event add(Event eventAdded) {
+        eventAdded.setId(counter.getAndIncrement());
+
+        Optional<Resource> foundResource = data.getResources().getRows().stream().filter(resource -> resource.getId() == eventAdded.getResourceId()).findFirst();
+        if(foundResource.isPresent() && eventAdded.getStartDate() != null) {
+            eventAdded.setResource(foundResource.get());
+            data.getEvents().getRows().add(eventAdded);
+            return eventAdded;
+        }
+
+        eventAdded.setResource(null);
+        eventAdded.setStartDate(null);
+        data.getUnplanned().getRows().add(eventAdded);
+
+        return eventAdded;
     }
 
     public boolean deleteEvent(Integer eventId) {

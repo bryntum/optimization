@@ -29,7 +29,7 @@ public class ScheduleConstraintProvider implements ConstraintProvider {
 
     protected Constraint skillMatch(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(Event.class)
-                .filter(event -> !event.getResource().getSkills().containsAll(event.getSkills()))
+                .filter(event -> event.getSkills() != null && !event.getResource().getSkills().containsAll(event.getSkills()))
                 .penalize(HardSoftScore.ofHard(1))
                 .asConstraint("SkillMatch");
     }

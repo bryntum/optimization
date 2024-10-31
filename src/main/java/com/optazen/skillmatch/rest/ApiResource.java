@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 
@@ -72,11 +71,12 @@ public class ApiResource {
     public Response sync(Sync sync) {
         boolean allSucceded = true;
         List<Event> unplannedEvents = new ArrayList<>();
+        List<Event> addedEvents = new ArrayList<>();
         Crud<Event> events = sync.getEvents();
         if (events != null) {
             allSucceded &= events.getUpdated().stream().allMatch(event -> dataRepository.update(event));
             allSucceded &= events.getRemoved().stream().allMatch(event -> dataRepository.deleteEvent(event.getId()));
-            events.getAdded().forEach(event -> logger.error("Adding Events is not yet implemented"));
+            addedEvents = events.getAdded().stream().map(event -> dataRepository.add(event)).toList();
         }
 
         Crud<Resource> resources = sync.getResources();
@@ -93,6 +93,13 @@ public class ApiResource {
         if (!unplannedEvents.isEmpty()) {
             jsonResponseObject.put("unplanned", Collections.singletonMap("rows",
                     unplannedEvents.stream()
+                            .map(event -> objectMapper.convertValue(event, Map.class))
+                            .collect(Collectors.toList())));
+        }
+
+        if (!addedEvents.isEmpty()) {
+            jsonResponseObject.put("events", Collections.singletonMap("rows",
+                    addedEvents.stream()
                             .map(event -> objectMapper.convertValue(event, Map.class))
                             .collect(Collectors.toList())));
         }

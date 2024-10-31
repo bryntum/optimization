@@ -6,6 +6,7 @@ import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 import ai.timefold.solver.core.api.domain.variable.PlanningVariable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.optazen.skillmatch.solver.EventDifficultyComparator;
 import com.optazen.skillmatch.solver.ResourceStrengthComparator;
 import jakarta.annotation.Nullable;
@@ -32,6 +33,10 @@ public class Event {
 
     @PlanningPin
     private boolean manuallyScheduled = false;
+
+    // This will hold the value of "$PhantomId" if present when new events are added
+    @JsonProperty("$PhantomId")
+    private String phantomId;
 
     public Event() {
     }
