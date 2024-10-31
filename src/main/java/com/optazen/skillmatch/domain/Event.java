@@ -24,7 +24,6 @@ public class Event {
 
     @PlanningVariable
     private LocalDateTime startDate;
-    @PlanningVariable(strengthComparatorClass = ResourceStrengthComparator.class)
     private Resource resource;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -86,16 +85,22 @@ public class Event {
     }
 
     @JsonIgnore
+    @PlanningVariable(strengthComparatorClass = ResourceStrengthComparator.class)
     public Resource getResource() {
         return resource;
     }
 
     public void setResource(Resource resource) {
         this.resource = resource;
-    }
+        if(resource != null) {
+            resourceId = resource.getId();
+        } else {
+            resourceId = null;
+        }
 
+    }
     public Integer getResourceId() {
-        return (resource == null) ? resourceId : Integer.valueOf(resource.getId());
+        return resourceId;
     }
 
     public void setResourceId(Integer resourceId) {
