@@ -5,16 +5,10 @@ import { StringHelper, DateHelper } from "@bryntum/schedulerpro";
  */
 const useSchedulerProConfig = (onSolve, onReset) => {
     return {
-        multiEventSelect: true,
-
         startDate : new Date(2024, 10, 4),
         endDate   : new Date(2024, 10, 9),
         flex      : 1,
-
-        timeResolution: {
-            magnitude: 1,
-            unit: 'd'
-        },
+        multiEventSelect: true,
         eventStyle: 'rounded',
         rowHeight: 65,
         barMargin: 7,
@@ -22,11 +16,31 @@ const useSchedulerProConfig = (onSolve, onReset) => {
         fillTicks: true,
         eventColor: 'indigo',
         useInitialAnimation: false,
-        zoomOnMouseWheel: false,
-        zoomOnTimeAxisDoubleClick: false,
-
+        dependenciesFeature: false,
+        createEventOnDblClick: {
+            useEventModelDefaults: true
+        },
+        scheduleTooltipFeature: false,
         title: 'Planned maintenance activities',
         ui: 'toolbar',
+
+        eventMenuFeature : {
+            items : {
+                splitEvent : false,
+                unassign   : {
+                    icon : 'b-fa b-fa-calendar-xmark',
+                    text : 'Move to unplanned list',
+                    onItem({ eventRecord, source }) {
+                        const { project } = eventRecord;
+                        eventRecord.remove();
+
+                        project.getCrudStore('unplanned').add(eventRecord);
+                        source.crudManager.sync();
+                    }
+                }
+            }
+        },
+
         tools : [
             {
                 type     : 'button',
@@ -114,6 +128,7 @@ const useSchedulerProConfig = (onSolve, onReset) => {
                 `;
             }
         },
+
         eventRenderer({ eventRecord }) {
             return `
                 <div>
@@ -124,7 +139,7 @@ const useSchedulerProConfig = (onSolve, onReset) => {
                     <div class="license-plate">
                         <div>Vehicle: ${eventRecord.licensePlate}</div>
                     </div>
-                    ${eventRecord.manuallyScheduled ? '<div class="manually-scheduled">M</div>' : ''}
+                    ${eventRecord.manuallyScheduled ? '<div class="manually-scheduled"><i class="b-fa b-fa-map-pin"></i></div>' : ''}
                 </div>
             `
         }

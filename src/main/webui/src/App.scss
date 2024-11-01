@@ -4,143 +4,149 @@
 
 // Giving our scheduler some height
 #root {
-    height: 100vh;
+    height : 100vh;
 }
 
 #content {
-    display: flex;
-    flex-direction: row;
-    flex: 1;
+    display        : flex;
+    flex-direction : row;
+    flex           : 1;
 }
 
 .b-fa-spinner {
-    animation: spin 1s linear infinite;
+    animation : spin 1s linear infinite;
 }
 
 @keyframes spin {
     from {
-        transform: rotate(0deg);
+        transform : rotate(0deg);
     }
     to {
-        transform: rotate(360deg);
+        transform : rotate(360deg);
     }
 }
 
 .b-resource-info {
     .b-resource-avatar {
-        margin-inline: .4em 1em;
-        width: 2.3em;
-        height: 2.3em;
+        margin-inline : .4em 1em;
+        width         : 2.3em;
+        height        : 2.3em;
     }
 
     dl {
-        margin: 0;
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-        flex: 1;
+        margin          : 0;
+        display         : flex;
+        justify-content : center;
+        flex-direction  : column;
+        flex            : 1;
     }
 
     dt {
-        font-weight: 500;
+        font-weight : 500;
     }
 
     dd {
-        flex: 1;
-        display: flex;
-        align-items: center;
+        flex        : 1;
+        display     : flex;
+        align-items : center;
     }
 
     .b-resource-meta {
-        margin-top: 0.3em;
+        margin-top : 0.3em;
 
         i {
-            margin-inline-end: 0.5em;
+            margin-inline-end : 0.5em;
         }
     }
 }
 
 .b-unplanned-grid {
     .unscheduledNameCell {
-        padding-block: 0.5rem;
+        padding-block : 0.5rem;
     }
 
     .b-grid-cell i {
-        font-size: 1.5em;
+        font-size : 1.5em;
     }
 
     .name-container {
-        display: flex;
-        flex-direction: column;
-        margin-inline-start: 1em;
-        flex: 1;
+        display             : flex;
+        flex-direction      : column;
+        margin-inline-start : 1em;
+        flex                : 1;
     }
 
     .vehicle-ct {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-inline: 0.5em 0.25em;
-        width: 4em;
+        display        : flex;
+        flex-direction : column;
+        align-items    : center;
+        margin-inline  : 0.5em 0.25em;
+        width          : 4em;
     }
 }
 
 .main-info {
-    display: flex;
-    flex: 1;
-    margin-bottom: 0.3em;
+    display       : flex;
+    flex          : 1;
+    margin-bottom : 0.3em;
 
     .task-name {
-        font-weight: 500;
+        font-weight : 500;
     }
 }
 
 .meta-info {
-    display: flex;
-    flex-direction: row;
-    flex: 1;
-    align-items: center;
-    font-size: .8em;
+    display        : flex;
+    flex-direction : row;
+    flex           : 1;
+    align-items    : center;
+    font-size      : .8em;
 }
 
 .license-plate {
-    display: inline-block;
-    font-size: 0.8em;
-    font-weight: 400;
+    display     : inline-block;
+    font-size   : 0.8em;
+    font-weight : 400;
 }
 
 .manually-scheduled {
-    float: right;
+    i {
+        font-size : 1em;
+        display   : block !important; 
+        margin-inline-end: 0 !important;
+    }
+
+    float : right;
 }
 
 .b-event-header {
-    margin-bottom: .2em;
+    margin-bottom : .2em;
 }
 
 .b-panel .b-panel-header.b-panel-ui-toolbar {
-    padding-inline: 1em;
-    min-height: 4em;
+    padding-inline : 1em;
+    min-height     : 4em;
 }
 
 ul.skills {
-    padding: 0;
-    margin-block: 0;
-    margin-inline: 0 auto;
-    display: flex;
-    flex-wrap: wrap;
-    row-gap: 0.25rem;
+    padding       : 0;
+    margin-block  : 0;
+    margin-inline : 0 auto;
+    display       : flex;
+    flex-wrap     : wrap;
+    row-gap       : 0.25rem;
 
     li {
-        display: inline-flex;
-        padding: 0.2em 0.8em;
-        border-radius: 1em;
-        font-size: 0.8em;
-        margin-inline-end: 0.5em;
-        color: #848abf;
-        list-style: none;
+        display           : inline-flex;
+        padding           : 0.2em 0.8em;
+        border-radius     : 1em;
+        font-size         : 0.8em;
+        margin-inline-end : 0.5em;
+        color             : #848abf;
+        list-style        : none;
 
         i {
-            margin-inline-end: .5em;
+            margin-inline-end : .5em;
         }
     }
 }
@@ -148,7 +154,7 @@ ul.skills {
 body:not(.b-theme-classic-dark) {
     ul.skills {
         li {
-            background: #f1f6ff;
+            background : #f1f6ff;
         }
     }
 }
@@ -156,51 +162,51 @@ body:not(.b-theme-classic-dark) {
 body.b-theme-classic-dark {
     ul.skills {
         li {
-            background: #6265d3;
-            color: #eee;
+            background : #6265d3;
+            color      : #eee;
         }
     }
 }
 
 .b-sch-event-tooltip {
-    max-width: none;
-    max-width: 45em;
+    max-width : none;
+    max-width : 45em;
 
     .b-panel-content {
-        display: grid;
-        grid-template-columns: 15em auto;
-        grid-column-gap: 2em;
-        grid-row-gap: 2em;
+        display               : grid;
+        grid-template-columns : 15em auto;
+        grid-column-gap       : 2em;
+        grid-row-gap          : 2em;
     }
 
     .field {
-        display: flex;
-        flex-direction: column;
-        font-weight: 500;
+        display        : flex;
+        flex-direction : column;
+        font-weight    : 500;
 
         label {
-            margin-bottom: 0.5em;
-            color: #888;
+            margin-bottom : 0.5em;
+            color         : #888;
         }
     }
 
     ul {
-        white-space: nowrap;
+        white-space : nowrap;
     }
 
     .b-panel-content {
-        padding: 1.5em !important;
-        margin: 0 !important;
+        padding : 1.5em !important;
+        margin  : 0 !important;
     }
 
     strong {
-        display: block;
-        margin-bottom: 0.5em;
+        display       : block;
+        margin-bottom : 0.5em;
     }
 
     .b-tooltip-section {
         i {
-            margin-inline-end: .5em;
+            margin-inline-end : .5em;
         }
     }
 }
@@ -208,109 +214,109 @@ body.b-theme-classic-dark {
 .b-popup.b-tooltip {
     &,
     > .b-panel-body-wrap > .b-panel-content {
-        border-radius: .5em !important;
+        border-radius : .5em !important;
     }
 }
 
 .b-sch-event-wrap {
-    padding-inline: 0.18em;
+    padding-inline : 0.18em;
 }
 
 .b-sch-event {
-    border-radius: 0.4em;
-    --event-background-l: 85%;
+    border-radius        : 0.4em;
+    --event-background-l : 85%;
 
     .b-sch-event-content .b-fa {
-        display: none;
+        display : none;
     }
 }
 
 .b-sch-event-content {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    font-size: 15px;
+    display        : flex;
+    flex-direction : column;
+    flex           : 1;
+    font-size      : 15px;
 
     .b-event-header {
-        display: flex;
-        align-items: center;
-        flex: 1;
+        display     : flex;
+        align-items : center;
+        flex        : 1;
     }
 
     .b-event-duration {
-        margin-inline-start: auto;
-        font-size: .8em;
+        margin-inline-start : auto;
+        font-size           : .8em;
     }
 
     .b-sch-event:not(.b-sch-event-selected) & {
-        filter: brightness(.5);
+        filter : brightness(.5);
     }
 }
 
 [data-assignment-id*="_generated"] .sch-event {
-    opacity: 0.4;
-    filter: grayscale(1);
+    opacity : 0.4;
+    filter  : grayscale(1);
 }
 
 .b-gridbase.b-split .b-grid-splitter:not(.b-disabled) {
-    flex: 0 0 1px;
+    flex : 0 0 1px;
 }
 
 .b-gridbase.b-split .b-grid-splitter:not(.b-disabled) .b-grid-splitter-inner {
-    width: 1px;
+    width : 1px;
 }
 
 .b-timeranges-canvas .b-sch-nonworkingtime {
-    background-color: rgba(240, 240, 240, 0.3);
+    background-color : rgba(240, 240, 240, 0.3);
 }
 
 body:not(.b-theme-classic-dark) {
     ul.skills {
         li {
-            background: #f1f6ff;
+            background : #f1f6ff;
         }
     }
 
     .b-resource-info {
         dt {
-            color: #222;
+            color : #222;
         }
     }
 
     .b-grid-row.b-group-row {
-        border-bottom: 1px solid #e9eaeb;
+        border-bottom : 1px solid #e9eaeb;
     }
 
     .b-column-line {
-        border-color: #e9eaeb;
+        border-color : #e9eaeb;
     }
 
     .b-sch-event-wrap {
         &.b-sch-style-rounded > .b-sch-event {
-            --event-a: .4;
+            --event-a : .4;
         }
     }
 
     .b-schedulerpro {
-        border-inline-end: 1px solid #d8d9da;
+        border-inline-end : 1px solid #d8d9da;
     }
 }
 
 body.b-theme-classic-dark {
     ul.skills {
         li {
-            background: #6265d3;
-            color: #eee;
+            background : #6265d3;
+            color      : #eee;
         }
     }
 
     .b-sch-event-wrap {
         &.b-sch-style-rounded > .b-sch-event {
-            --event-a: .85;
+            --event-a : .85;
         }
     }
 
     .b-schedulerpro {
-        border-inline-end: 2px solid #2b2b2f;
+        border-inline-end : 2px solid #2b2b2f;
     }
 }
