@@ -41,6 +41,50 @@ const useSchedulerProConfig = (onSolve, onReset) => {
             }
         },
 
+        taskEditFeature : {
+            editorConfig : {
+                title : 'Task'
+            },
+
+            items : {
+                generalTab : {
+                    items : {
+                        resourcesField : {
+                            label : 'Technician'
+                        },
+                        effortField  : false,
+                        vehicleField : {
+                            type   : 'text',
+                            name   : 'licensePlate',
+                            label  : 'Vehicle',
+                            weight : 150
+                        },
+                        // Store for this field is set inside a useEffect hook once data is loaded
+                        skillField : {
+                            type         : 'combo',
+                            multiSelect  : true,
+                            idField      : 'id',
+                            displayField : 'name',
+                            label        : 'Skills',
+                            name         : 'skills',
+                            weight       : 160
+                        },
+                        manuallyScheduledField: {
+                            type   : 'checkbox',
+                            label  : 'Manually Scheduled?',
+                            name   : 'manuallyScheduled',
+                            weight : 600 
+                        },
+                        percentDoneField: false
+                    }
+                },
+                predecessorsTab : false,
+                successorsTab   : false,
+                advancedTab     : false,
+                notesTab        : false
+            }
+        },
+
         tools : [
             {
                 type     : 'button',

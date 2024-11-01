@@ -183,6 +183,14 @@ function App() {
         });
     }, [unplannedGrid, schedulerPro])
 
+    // Populate the skills combo in the event editor
+    useEffect(() => {
+        if (!schedulerPro || !isProjectLoaded) return;
+
+        schedulerPro.features.taskEdit.items.generalTab.items.skillField.store = schedulerPro.project.getCrudStore('skills');
+    }, [schedulerPro, isProjectLoaded])
+
+
     return (
         <>
             <BryntumDemoHeader/>
