@@ -67,6 +67,17 @@ public class DataRepository {
 
         return eventAdded;
     }
+        
+    public Event addUnplanned(Event eventAdded) {
+        eventAdded.setId(counter.getAndIncrement());
+
+        eventAdded.setResource(null);
+        eventAdded.setStartDate(null);
+
+        data.getUnplanned().getRows().add(eventAdded);
+
+        return eventAdded;
+    }
 
     public boolean deleteEvent(Integer eventId) {
         return this.data.getEvents().getRows().removeIf(event -> event.getId() == eventId);

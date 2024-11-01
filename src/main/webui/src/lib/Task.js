@@ -12,17 +12,17 @@ export default class Task extends EventModel {
         { name : 'duration', defaultValue : 1 },
         { name : 'durationUnit', defaultValue : 'h' },
         {
-            name : 'startDate',
+            name: 'startDate',
             serialize(value) {
-                return value.toISOString();
+                return value ? value.toISOString() : null;
             }
         },
         {
-            name : 'endDate',
+            name: 'endDate',
             serialize(value) {
-                return value.toISOString();
+                return value ? value.toISOString() : null;
             }
-        },
+        }
     ];
 
     get requiredSkillRecords() {

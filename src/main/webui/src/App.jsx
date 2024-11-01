@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { BryntumDemoHeader, BryntumGrid, BryntumSchedulerPro, BryntumSplitter } from "@bryntum/schedulerpro-react";
 
-import { useSchedulerProConfig, unplannedGridConfig } from "./AppConfig";
+import { useSchedulerProConfig, useUnplannedGridConfig } from "./AppConfig";
 import Task from "./lib/Task.js";
 import Technician from "./lib/Technician.js";
 import Skill from "./lib/Skill.js";
@@ -50,30 +50,40 @@ function App() {
         await schedulerPro.project.load();
     }
 
-    const openWebsocket = async() => { 
-        if (!schedulerPro) return;
+    // Adds random tasks to the unplanned grid
+    const onAddRandomTasks = (numberOfTasks) => {
+        if (!unplannedGrid || !schedulerPro) return;
 
-        const { protocol, hostname, port } = window.location;
-        const wsProtocol = protocol === 'https:' ? 'wss' : 'ws';
-        const wsPort = port ? `:${port}` : '';
-        const socket = new WebSocket(`${wsProtocol}://${hostname}${wsPort}/timefold`)
+        const totalTaskCount = unplannedGrid.store.count + schedulerPro.project.eventStore.count;
+        const possibleSkills = schedulerPro.project.getCrudStore('skills').records;
+        const icons = ['bus', 'car', 'plane', 'ship', 'helicopter', 'rocket', 'truck', 'train'];
 
-        // Connection opened
-        socket.addEventListener("open", event => {
-            console.log("Connected with websocket")
-        });
+        const tasks = [];
+        for (let i = 0; i < numberOfTasks; i++) {
+            const numSkills = Math.floor(Math.random() * 3) + 1; // 1-3 skills
+            const selectedSkills = possibleSkills
+                .map(skill => skill.id)
+                .sort(() => 0.5 - Math.random())
+                .slice(0, numSkills); 
 
-        // Listen for messages
-        socket.addEventListener("message", async event => {
-            console.log("Update from server ", event.data)
-            if(event.data.startsWith("Finished")) {
-                console.log("Done solving");
-            }
-            await schedulerPro.project.load();
-        });
+            const licensePlate = Math.random().toString(36).substring(2, 8).toUpperCase();
+            const iconCls = `b-fa b-fa-${icons[Math.floor(Math.random() * icons.length)]}`;
+
+            tasks.push({
+                name: `Task ${totalTaskCount + i + 1}`,
+                duration: Math.floor(Math.random() * 8) + 1, // 1-8 hours
+                skills: selectedSkills,
+                licensePlate: licensePlate,
+                iconCls: iconCls
+            });
+        }
+
+        unplannedGrid.store.add(tasks);
+        schedulerPro.crudManager.sync();
     }
 
     const schedulerProConfig = useSchedulerProConfig(onSolve, onReset)
+    const unplannedGridConfig = useUnplannedGridConfig(onAddRandomTasks)
 
     const [isProjectLoaded, setIsProjectLoaded] = useState(false);
     const [projectConfig] = useState({
@@ -111,10 +121,34 @@ function App() {
 
     // Setup websocket as soon as schedulerPro is available
     useEffect(() => {
-        openWebsocket()
-    }, [schedulerPro])
+        const openWebsocket = async() => { 
+            if (!schedulerPro) return;
+
+            const { protocol, hostname, port } = window.location;
+            const wsProtocol = protocol === 'https:' ? 'wss' : 'ws';
+            const wsPort = port ? `:${port}` : '';
+            const socket = new WebSocket(`${wsProtocol}://${hostname}${wsPort}/timefold`)
+
+            // Connection opened
+            socket.addEventListener("open", event => {
+                console.log("Connected with websocket")
+            });
+
+            // Listen for messages
+            socket.addEventListener("message", async event => {
+                console.log("Update from server ", event.data)
+                if(event.data.startsWith("Finished")) {
+                    console.log("Done solving");
+                }
+                await schedulerPro.project.load();
+            });
+        }
+
+        openWebsocket();
+    }, [schedulerPro]);
 
     // Called the first time when project has loaded data and unplannedGrid also exists
+    // Setup the store for unplannedGrid
     useEffect(() => {
         if (!isProjectLoaded || !unplannedGrid) return;
 

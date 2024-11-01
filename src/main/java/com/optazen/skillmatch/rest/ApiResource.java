@@ -86,6 +86,11 @@ public class ApiResource {
             resources.getAdded().forEach(event -> logger.error("Adding Resources is not yet implemented"));
         }
 
+        Crud<Event> unplanned = sync.getUnplanned();
+        if (unplanned != null) {
+            unplannedEvents = unplanned.getAdded().stream().map(event -> dataRepository.addUnplanned(event)).toList();  
+        }
+
         Map<String, Object> jsonResponseObject = new HashMap<>();
         jsonResponseObject.put("success", allSucceded);
         jsonResponseObject.put("requestId", sync.getRequestId());

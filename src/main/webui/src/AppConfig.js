@@ -131,42 +131,53 @@ const useSchedulerProConfig = (onSolve, onReset) => {
     }
 };
 
-const unplannedGridConfig = {
-    cls                        : 'b-unplanned-grid',
-    hideHeaders                : true,
-    rowHeight                  : 65,
-    disableGridRowModelWarning : true,
-    collapsible                : true,
-    flex                       : '0 0 300px',
-    ui                         : 'toolbar',
-    title                      : 'Unplanned maintenance',
-    emptyText                  : 'No unplanned maintenance',
-    selectionMode              : {
-        multiSelect : false
-    },
-    features : {
-        stripe : true,
-        sort   : 'name'
-    },
+const useUnplannedGridConfig = (onAddRandomTasks) => {
+    return {
+        cls                        : 'b-unplanned-grid',
+        hideHeaders                : true,
+        disableGridRowModelWarning : true,
+        collapsible                : true,
+        flex                       : '0 0 300px',
+        ui                         : 'toolbar',
+        title                      : 'Unplanned maintenance',
+        emptyText                  : 'No unplanned maintenance',
+        selectionMode              : {
+            multiSelect : false
+        },
+        features : {
+            stripe : true,
+            sort   : 'name'
+        },
 
-    columns : [
-        {
-            flex       : 1,
-            field      : 'name',
-            cellCls    : 'unscheduledNameCell',
-            htmlEncode : false,
-            renderer   : ({ record : task }) => `
-                    <div class="vehicle-ct">
-                        <i class="${StringHelper.encodeHtml(task.iconCls) || ''}"></i>
-                        <span class="license-plate">${StringHelper.encodeHtml(task.licensePlate)}</span>
-                    </div>
-                    <div class="name-container">
-                        <div class="main-info"><span class="task-name">${StringHelper.encodeHtml(task.name)}</span></div>
-                        <div class="meta-info"><ul class="skills">${task.requiredSkillNames.map(skill => `<li data-btip="This task requires a technician with the following skills: <strong>${task.requiredSkillNames.join(', ')}</strong>">${skill}</li>`).join('')}</ul><span class="duration">${task.duration ? task.duration + 'h' : ''}</span></div>
-                    </div>
-                `
-        }
-    ],
+        tools : [
+            {
+                type : 'button',
+                text : '+5',
+                tooltip : 'Add 5 random tasks',
+                onAction : () => onAddRandomTasks(5)
+            }
+        ],
+
+        columns : [
+            {
+                flex       : 1,
+                field      : 'name',
+                cellCls    : 'unscheduledNameCell',
+                autoHeight : true,
+                htmlEncode : false,
+                renderer   : ({ record : task }) => `
+                        <div class="vehicle-ct">
+                            <i class="${StringHelper.encodeHtml(task.iconCls) || ''}"></i>
+                            <span class="license-plate">${StringHelper.encodeHtml(task.licensePlate)}</span>
+                        </div>
+                        <div class="name-container">
+                            <div class="main-info"><span class="task-name">${StringHelper.encodeHtml(task.name)}</span></div>
+                            <div class="meta-info"><ul class="skills">${task.requiredSkillNames.map(skill => `<li data-btip="This task requires a technician with the following skills: <strong>${task.requiredSkillNames.join(', ')}</strong>">${skill}</li>`).join('')}</ul><span class="duration">${task.duration ? task.duration + 'h' : ''}</span></div>
+                        </div>
+                    `
+            }
+        ],
+    };
 };
 
-export { useSchedulerProConfig, unplannedGridConfig };
+export { useSchedulerProConfig, useUnplannedGridConfig };

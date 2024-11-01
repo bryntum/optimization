@@ -8,6 +8,7 @@ public class Sync {
     private long requestId;
     private Crud<Event> events;
     private Crud<Resource> resources;
+    private Crud<Event> unplanned;
 
     public Sync() {
     }
@@ -42,5 +43,13 @@ public class Sync {
 
     public void setResources(Crud<Resource> resources) {
         this.resources = resources;
+    }
+
+    public Crud<Event> getUnplanned() {
+        return unplanned;
+    }
+
+    public void setUnplannedEntries(Crud<Event> unplannedEntries) {
+        this.unplanned = unplannedEntries;
     }
 }
