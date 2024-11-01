@@ -85,8 +85,8 @@ const useSchedulerProConfig = (onSolve, onReset) => {
             }
         },
 
-        tools : [
-            {
+        tools : {
+            resetButton: {
                 type     : 'button',
                 text     : 'Reset',
                 icon     : 'b-icon b-fa-rotate-right',
@@ -94,19 +94,18 @@ const useSchedulerProConfig = (onSolve, onReset) => {
                 tooltip  : 'Resets the data',
                 onAction : onReset 
             },
-            {
+            solveButton: {
                 type     : 'button',
                 text     : 'Solve',
+                ref      : 'solveButton',
                 icon     : 'b-icon b-fa-wand-magic-sparkles',
                 cls      : 'b-transparent',
                 tooltip  : 'Tries to fit the unplanned events into the currently displayed timeframe',
-                onAction : async ({ source }) => {
-                    source.icon = 'b-icon b-fa-spinner'
-                    await onSolve()
-                    source.icon = 'b-icon b-fa-check'
+                onAction : () => {
+                    onSolve()
                 }
-            },
-        ],
+            }
+        },
 
         calendarHighlightFeature: {
             calendar : 'resource',

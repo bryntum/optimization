@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { BryntumDemoHeader, BryntumGrid, BryntumSchedulerPro, BryntumSplitter } from "@bryntum/schedulerpro-react";
+import { Mask } from "@bryntum/schedulerpro";
 
 import { useSchedulerProConfig, useUnplannedGridConfig } from "./AppConfig";
 import Task from "./lib/Task.js";
@@ -15,6 +16,7 @@ function App() {
     const dragRef = useRef();
 
     const [schedulerPro, setSchedulerPro] = useState();
+    const [isSolving, setIsSolving] = useState(false);
     const [unplannedGrid, setUnplannedGrid] = useState();
 
     useEffect(() => {
@@ -25,6 +27,7 @@ function App() {
     const onSolve = async () => {
         if (!schedulerPro) return;
 
+        setIsSolving(true);
         const response = await fetch('api/solve', {
             method: 'POST',
             headers: {
@@ -34,10 +37,29 @@ function App() {
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
-
-        // Trigger load call instead of setting data inline so unplannedGrid's store also get's refreshed
-        await schedulerPro.project.load();
     }
+
+    useEffect(() => {
+        if (!schedulerPro) return;
+
+        if (isSolving) {
+            schedulerPro.tools.solveButton.icon = 'b-fa b-fa-spinner'
+
+            const mask = Mask.mask({
+                text: "Solving...",
+                appendTo: 'content'
+            })
+        }
+        else {
+            schedulerPro.tools.solveButton.icon = 'b-fa b-fa-check'
+
+            Mask.unmask();
+        }
+
+        () => {
+            mask.destroy();
+        }
+    }, [schedulerPro, isSolving])
 
     const onReset = async () => { if (!schedulerPro) return;
         const response = await fetch('api/reset', {
@@ -139,6 +161,7 @@ function App() {
                 console.log("Update from server ", event.data)
                 if(event.data.startsWith("Finished")) {
                     console.log("Done solving");
+                    setIsSolving(false);
                 }
                 await schedulerPro.project.load();
             });
@@ -189,7 +212,6 @@ function App() {
 
         schedulerPro.features.taskEdit.items.generalTab.items.skillField.store = schedulerPro.project.getCrudStore('skills');
     }, [schedulerPro, isProjectLoaded])
-
 
     return (
         <>
