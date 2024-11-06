@@ -11,6 +11,8 @@ import { generateRandomTasks } from "./utils";
 
 import "./App.scss";
 
+import timefoldNegativeLogo from '../public/timefold-logomark-negative.svg';
+
 function App() {
     const schedulerProRef = useRef();
     const unplannedGridRef = useRef();
@@ -199,7 +201,9 @@ function App() {
 
     return (
         <>
-            <BryntumDemoHeader/>
+            <BryntumDemoHeader title={
+                <>Bryntum + <img src={timefoldNegativeLogo} alt="Timefold Logo"/> Timefold for Skill Matching</>
+            }/>
             <div id="content">
                 <BryntumSchedulerPro 
                     ref={schedulerProRef}

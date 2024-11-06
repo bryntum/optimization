@@ -7,6 +7,11 @@
     height : 100vh;
 }
 
+// Make the timefold logo smaller
+.demo-header #title img {
+    width: 1.25rem;
+}
+
 #content {
     display        : flex;
     flex-direction : row;
