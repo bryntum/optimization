@@ -86,15 +86,22 @@ const useSchedulerProConfig = (onSolve, onReset) => {
         },
 
         tools : {
+            scoreLabel : {
+                weight : 300,
+                type   : 'label',
+                text   : '',
+            },
             resetButton: {
+                weight   : 200,
                 type     : 'button',
                 text     : 'Reset',
                 icon     : 'b-icon b-fa-rotate-right',
                 cls      : 'b-transparent',
                 tooltip  : 'Resets the data',
-                onAction : onReset 
+                onAction : onReset,
             },
             solveButton: {
+                weight   : 100,
                 type     : 'button',
                 text     : 'Solve',
                 ref      : 'solveButton',
@@ -194,7 +201,6 @@ const useUnplannedGridConfig = (onAddRandomTasks) => {
         cls                        : 'b-unplanned-grid',
         hideHeaders                : true,
         disableGridRowModelWarning : true,
-        collapsible                : true,
         flex                       : '0 0 300px',
         ui                         : 'toolbar',
         title                      : 'Unplanned maintenance',
@@ -207,14 +213,14 @@ const useUnplannedGridConfig = (onAddRandomTasks) => {
             sort   : 'name'
         },
 
-        tools : [
-            {
+        tools : { 
+            addRandomTasksButton: {
                 type : 'button',
                 text : '+5',
                 tooltip : 'Add 5 random tasks',
                 onAction : () => onAddRandomTasks(5)
-            }
-        ],
+            },
+         },
 
         columns : [
             {

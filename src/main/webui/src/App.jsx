@@ -7,6 +7,7 @@ import Task from "./lib/Task.js";
 import Technician from "./lib/Technician.js";
 import Skill from "./lib/Skill.js";
 import Drag from "./lib/Drag.js";
+import { generateRandomTasks } from "./utils";
 
 import "./App.scss";
 
@@ -80,29 +81,11 @@ function App() {
         const possibleSkills = schedulerPro.project.getCrudStore('skills').records;
         const icons = ['bus', 'car', 'plane', 'ship', 'helicopter', 'rocket', 'truck', 'train'];
 
-        const tasks = [];
-        for (let i = 0; i < numberOfTasks; i++) {
-            const numSkills = Math.floor(Math.random() * 3) + 1; // 1-3 skills
-            const selectedSkills = possibleSkills
-                .map(skill => skill.id)
-                .sort(() => 0.5 - Math.random())
-                .slice(0, numSkills); 
-
-            const licensePlate = Math.random().toString(36).substring(2, 8).toUpperCase();
-            const iconCls = `b-fa b-fa-${icons[Math.floor(Math.random() * icons.length)]}`;
-
-            tasks.push({
-                name: `Task ${totalTaskCount + i + 1}`,
-                duration: Math.floor(Math.random() * 8) + 1, // 1-8 hours
-                skills: selectedSkills,
-                licensePlate: licensePlate,
-                iconCls: iconCls
-            });
-        }
+        const tasks = generateRandomTasks({numberOfTasks, totalTaskCount, possibleSkills, icons});
 
         unplannedGrid.store.add(tasks);
         schedulerPro.crudManager.sync();
-    }
+    };
 
     const schedulerProConfig = useSchedulerProConfig(onSolve, onReset)
     const unplannedGridConfig = useUnplannedGridConfig(onAddRandomTasks)
@@ -136,12 +119,13 @@ function App() {
         }
     }) 
 
-    // Only called on initial page load to reset data
+    // Reset the data in backend when page is reloaded 
     useEffect(() => {
         onReset();
     }, [])
 
     // Setup websocket as soon as schedulerPro is available
+    // We use websocket to get updates from the server when solving
     useEffect(() => {
         const openWebsocket = async() => { 
             if (!schedulerPro) return;
@@ -206,7 +190,7 @@ function App() {
         });
     }, [unplannedGrid, schedulerPro])
 
-    // Populate the skills combo in the event editor
+    // Skills combo in the event editor needs the list of skills from backend which we set here
     useEffect(() => {
         if (!schedulerPro || !isProjectLoaded) return;
 
