@@ -19,7 +19,7 @@ function App() {
     const dragRef = useRef();
 
     const [schedulerPro, setSchedulerPro] = useState();
-    const [isSolving, setIsSolving] = useState(false);
+    const [solveStatus, setSolveStatus] = useState('pending'); // Can be 'pending', 'solving', or 'finished'
     const [unplannedGrid, setUnplannedGrid] = useState();
 
     useEffect(() => {
@@ -30,7 +30,7 @@ function App() {
     const onSolve = async () => {
         if (!schedulerPro) return;
 
-        setIsSolving(true);
+        setSolveStatus('solving');
         const response = await fetch('api/solve', {
             method: 'POST',
             headers: {
@@ -45,24 +45,26 @@ function App() {
     useEffect(() => {
         if (!schedulerPro) return;
 
-        if (isSolving) {
+        let mask;
+        if (solveStatus === 'solving') {
             schedulerPro.tools.solveButton.icon = 'b-fa b-fa-spinner'
-
-            const mask = Mask.mask({
+            mask = Mask.mask({
                 text: "Solving...",
                 appendTo: 'content'
             })
         }
-        else {
+        else if (solveStatus === 'finished') {
             schedulerPro.tools.solveButton.icon = 'b-fa b-fa-check'
-
             Mask.unmask();
+        } 
+        else { // isSolving === 'pending'
+            schedulerPro.tools.solveButton.icon = 'b-fa b-fa-wand-magic-sparkles'
         }
 
         () => {
             mask.destroy();
         }
-    }, [schedulerPro, isSolving])
+    }, [schedulerPro, solveStatus])
 
     const onReset = async () => { if (!schedulerPro) return;
         const response = await fetch('api/reset', {
@@ -87,6 +89,7 @@ function App() {
 
         unplannedGrid.store.add(tasks);
         schedulerPro.crudManager.sync();
+        setSolveStatus('pending');
     };
 
     const schedulerProConfig = useSchedulerProConfig(onSolve, onReset)
@@ -147,7 +150,7 @@ function App() {
                 console.log("Update from server ", event.data)
                 if(event.data.startsWith("Finished")) {
                     console.log("Done solving");
-                    setIsSolving(false);
+                    setSolveStatus('finished');
                 }
                 await schedulerPro.project.load();
             });

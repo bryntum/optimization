@@ -175,7 +175,7 @@ body.b-theme-classic-dark {
 
 .b-sch-event-tooltip {
     max-width : none;
-    max-width : 45em;
+    max-width : 35rem !important;
 
     .b-panel-content {
         display               : grid;
@@ -192,6 +192,11 @@ body.b-theme-classic-dark {
         label {
             margin-bottom : 0.5em;
             color         : #888;
+
+            i {
+                display: inline-block;
+                margin-left: 0.25rem;
+            }
         }
     }
 
