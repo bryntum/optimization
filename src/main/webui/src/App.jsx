@@ -66,7 +66,8 @@ function App() {
         }
     }, [schedulerPro, solveStatus])
 
-    const onReset = async () => { if (!schedulerPro) return;
+    const onReset = async () => { 
+        if (!schedulerPro) return;
         const response = await fetch('api/reset', {
             method: 'POST'
         })
@@ -119,7 +120,7 @@ function App() {
                 reapplySortersOnAdd: true
             }
         ],
-        onLoad: () => {
+        onLoad: (args) => {
             setIsProjectLoaded(true);
         }
     }) 
@@ -201,6 +202,23 @@ function App() {
 
         schedulerPro.features.taskEdit.items.generalTab.items.skillField.store = schedulerPro.project.getCrudStore('skills');
     }, [schedulerPro, isProjectLoaded])
+
+    // Update score whenever project loads new data
+    useEffect(() => {
+        if (!schedulerPro) return;
+
+        const setScore = (score) => {
+            schedulerPro.tools.scoreLabel.text = `Score: ${score}`;
+        }
+
+        schedulerPro.project.on('load', ({ response }) => {
+            setScore(response.scoreAnalysis.score);
+        });
+
+        schedulerPro.project.on('sync', ({ response }) => {
+            setScore(response.scoreAnalysis.score);
+        });
+    }, [schedulerPro])
 
     return (
         <>

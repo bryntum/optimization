@@ -1,7 +1,7 @@
 export const generateRandomTasks = ({numberOfTasks, totalTaskCount, possibleSkills, icons}) => {
   const tasks = [];
   for (let i = 0; i < numberOfTasks; i++) {
-    const numSkills = Math.floor(Math.random() * 3) + 1; // 1-3 skills
+    const numSkills = Math.floor(Math.random() * 2) + 1; // 1-2 skills
     const selectedSkills = possibleSkills
       .map(skill => skill.id)
       .sort(() => 0.5 - Math.random())
