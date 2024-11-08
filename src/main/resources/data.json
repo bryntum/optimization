@@ -101,7 +101,7 @@
         "eventColor": "orange",
         "skills": [
           2,
-          3
+          4
         ]
       },
       {
@@ -141,6 +141,19 @@
         "skills": [
           1,
           2
+        ]
+      },
+      {
+        "id": 9,
+        "name": "Goro Takemura",
+        "role": "Auto Body Technician",
+        "calendar": "dayshift",
+        "type": "Technicians",
+        "image": "takemura",
+        "eventColor": "yellow",
+        "skills": [
+          2,
+          3
         ]
       }
     ]
@@ -327,6 +340,18 @@
           2
         ],
         "startDate": "2024-11-08T11:00:00",
+        "manuallyScheduled": true
+      },
+      {
+        "id": 16,
+        "resourceId": 9,
+        "name": "Brake pad",
+        "duration": 5,
+        "licensePlate": "TRGMZT",
+        "skills": [
+          2,3
+        ],
+        "startDate": "2024-11-06T11:00:00",
         "manuallyScheduled": true
       }
     ]
