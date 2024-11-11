@@ -2,7 +2,7 @@ package com.optazen.skillmatch.domain;
 
 import ai.timefold.solver.core.api.domain.solution.*;
 import ai.timefold.solver.core.api.domain.valuerange.ValueRangeProvider;
-import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
+import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
 import com.optazen.skillmatch.solver.ConstraintParameters;
 
 import java.time.LocalDate;
@@ -26,7 +26,7 @@ public class Schedule {
     ConstraintParameters constraintParameters;
 
     @PlanningScore
-    private HardSoftScore score;
+    private HardMediumSoftScore score;
 
     public Schedule() {
     }

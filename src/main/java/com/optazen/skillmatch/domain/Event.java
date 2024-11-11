@@ -90,7 +90,7 @@ public class Event {
     }
 
     @JsonIgnore
-    @PlanningVariable(strengthComparatorClass = ResourceStrengthComparator.class)
+    @PlanningVariable(strengthComparatorClass = ResourceStrengthComparator.class, allowsUnassigned = true)
     public Resource getResource() {
         return resource;
     }
@@ -102,8 +102,8 @@ public class Event {
         } else {
             resourceId = null;
         }
-
     }
+
     public Integer getResourceId() {
         return resourceId;
     }

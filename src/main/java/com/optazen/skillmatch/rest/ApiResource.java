@@ -1,7 +1,7 @@
 package com.optazen.skillmatch.rest;
 
 import ai.timefold.solver.core.api.score.analysis.ScoreAnalysis;
-import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
+import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
 import ai.timefold.solver.core.api.solver.SolutionManager;
 import ai.timefold.solver.core.api.solver.SolverJob;
 import ai.timefold.solver.core.api.solver.SolverManager;
@@ -39,7 +39,7 @@ public class ApiResource {
     @Inject
     SolverManager<Schedule, Long> solverManager;
     @Inject
-    SolutionManager<Schedule, HardSoftScore> solutionManager;
+    SolutionManager<Schedule, HardMediumSoftScore> solutionManager;
 
     @Inject
     TimefoldWebsocket timefoldWebsocket;
@@ -145,7 +145,7 @@ public class ApiResource {
 
     @GET
     @Path("/scoreAnalysis")
-    public ScoreAnalysis<HardSoftScore> scoreAnalysis() {
+    public ScoreAnalysis<HardMediumSoftScore> scoreAnalysis() {
         return scoreAnalysisService.analysis(dataRepository.solution().orElseThrow().getSchedule());
     }
 

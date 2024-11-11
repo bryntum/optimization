@@ -1,7 +1,7 @@
 package com.optazen.skillmatch.api;
 
 import ai.timefold.solver.core.api.score.analysis.ScoreAnalysis;
-import ai.timefold.solver.core.api.score.buildin.hardsoft.HardSoftScore;
+import ai.timefold.solver.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.optazen.skillmatch.domain.*;
@@ -33,7 +33,7 @@ public class Data {
     private LocalTime startTime;
     private LocalTime endTime;
     @JsonIgnore
-    private ScoreAnalysis<HardSoftScore> scoreAnalysis;
+    private ScoreAnalysis<HardMediumSoftScore> scoreAnalysis;
 
     public Data() {
     }
@@ -64,8 +64,8 @@ public class Data {
         if (unplanned == null) {
             unplanned = new Rows<>();
         }
-        this.events.setRows(schedule.getEvents().stream().filter(event -> event.getStartDate() != null).collect(Collectors.toList()));
-        this.unplanned.setRows(schedule.getEvents().stream().filter(event -> event.getStartDate() == null).collect(Collectors.toList()));
+        this.events.setRows(schedule.getEvents().stream().filter(event -> event.getStartDate() != null && event.getResource() != null).collect(Collectors.toList()));
+        this.unplanned.setRows(schedule.getEvents().stream().filter(event -> event.getStartDate() == null || event.getResource() == null).collect(Collectors.toList()));
     }
 
     private Resource findResource(int resourceId) {
@@ -169,12 +169,12 @@ public class Data {
     }
 
     @JsonIgnore
-    public void setScoreAnalysis(ScoreAnalysis<HardSoftScore> scoreAnalysis) {
+    public void setScoreAnalysis(ScoreAnalysis<HardMediumSoftScore> scoreAnalysis) {
         this.scoreAnalysis = scoreAnalysis;
     }
 
     @JsonProperty
-    public ScoreAnalysis<HardSoftScore> getScoreAnalysis() {
+    public ScoreAnalysis<HardMediumSoftScore> getScoreAnalysis() {
         return scoreAnalysis;
     }
 
