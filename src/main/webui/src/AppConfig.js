@@ -188,8 +188,8 @@ const useSchedulerProConfig = (onSolve, onReset) => {
                     </div>
                     <div class="license-plate">
                         <div>Vehicle: ${eventRecord.licensePlate}</div>
+                        ${eventRecord.manuallyScheduled ? '<div class="manually-scheduled"><i class="b-fa b-fa-map-pin"></i></div>' : ''}
                     </div>
-                    ${eventRecord.manuallyScheduled ? '<div class="manually-scheduled"><i class="b-fa b-fa-map-pin"></i></div>' : ''}
                 </div>
             `
         }
