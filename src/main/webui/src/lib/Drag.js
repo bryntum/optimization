@@ -101,6 +101,7 @@ export default class Drag extends DragHelper {
                 firstAvailableDaySlot = technician.getFirstAvailableTimeSlot(dropDate, task);
 
             if (firstAvailableDaySlot) {
+                task.manuallyScheduled = true; // Task should become manuallyScheduled if it's dragged onto the scheduler
                 await schedule.scheduleEvent({
                     eventRecord    : task,
                     startDate      : firstAvailableDaySlot,

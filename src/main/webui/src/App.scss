@@ -116,13 +116,13 @@
     font-weight     : 400;
 
     .manually-scheduled {
+        float : right;
+
         i {
             font-size : 1em;
             display   : block !important; 
             margin-inline-end: 0 !important;
         }
-
-        float : right;
     }
 }
 

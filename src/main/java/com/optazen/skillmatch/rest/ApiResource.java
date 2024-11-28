@@ -89,6 +89,7 @@ public class ApiResource {
         Crud<Event> unplanned = sync.getUnplanned();
         if (unplanned != null) {
             unplannedEvents = unplanned.getAdded().stream().map(event -> dataRepository.addUnplanned(event)).toList();  
+            allSucceded &= unplanned.getRemoved().stream().allMatch(event -> dataRepository.deleteUnplanned(event.getId()));
         }
 
         Map<String, Object> jsonResponseObject = new HashMap<>();

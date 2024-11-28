@@ -79,6 +79,10 @@ public class DataRepository {
         return eventAdded;
     }
 
+    public boolean deleteUnplanned(Integer eventId) {
+        return data.getUnplanned().getRows().removeIf(event -> event.getId() == eventId);
+    }
+
     public boolean deleteEvent(Integer eventId) {
         return this.data.getEvents().getRows().removeIf(event -> event.getId() == eventId);
     }
