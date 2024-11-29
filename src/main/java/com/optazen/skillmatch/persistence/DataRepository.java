@@ -1,5 +1,6 @@
 package com.optazen.skillmatch.persistence;
 
+import com.optazen.skillmatch.api.Assignment;
 import com.optazen.skillmatch.api.Data;
 import com.optazen.skillmatch.domain.Event;
 import com.optazen.skillmatch.domain.Resource;
@@ -130,5 +131,39 @@ public class DataRepository {
         }
 
         return unplannedEventsForResource;
+    }
+
+    public boolean update(Assignment assignment) {
+        Optional<Event> event = this.data.getEvents().getRows().stream().filter(e -> e.getId() == assignment.getEventId()).findFirst();
+        Optional<Resource> resource = this.data.getResources().getRows().stream().filter(r -> r.getId() == assignment.getResourceId()).findFirst();
+        if (event.isPresent() && resource.isPresent()) {
+            event.get().setResource(resource.get());
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean deleteAssignment(int eventId) {
+        return this.data.getEvents().getRows().stream().anyMatch(event -> {
+            if (event.getId() == eventId) {
+                event.setResource(null);
+                return true;
+            }
+            return false;
+        });
+    }
+
+    public Assignment addAssignment(Assignment assignment) {
+        assignment.setId(counter.getAndIncrement());
+
+        Optional<Event> event = this.data.getUnplanned().getRows().stream().filter(e -> e.getId() == assignment.getEventId()).findFirst();
+        Optional<Resource> resource = this.data.getResources().getRows().stream().filter(r -> r.getId() == assignment.getResourceId()).findFirst();
+        if (event.isPresent() && resource.isPresent()) {
+            event.get().setResource(resource.get());
+            return assignment;
+        } else {
+            return null;
+        }
     }
 }

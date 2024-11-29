@@ -99,8 +99,9 @@ export default class Drag extends DragHelper {
                 dropDate              = schedule.getDateFromCoordinate(coordinate, 'round', false),
                 // We schedule the task on the first available time slot for the day
                 firstAvailableDaySlot = technician.getFirstAvailableTimeSlot(dropDate, task);
-
-            if (firstAvailableDaySlot) {
+            
+            debugger;
+            if (firstAvailableDaySlot && technician.canPerformTask(task, firstAvailableDaySlot)) {
                 task.manuallyScheduled = true; // Task should become manuallyScheduled if it's dragged onto the scheduler
                 await schedule.scheduleEvent({
                     eventRecord    : task,

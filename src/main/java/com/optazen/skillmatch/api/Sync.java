@@ -9,6 +9,7 @@ public class Sync {
     private Crud<Event> events;
     private Crud<Resource> resources;
     private Crud<Event> unplanned;
+    private Crud<Assignment> assignments;
 
     public Sync() {
     }
@@ -51,5 +52,9 @@ public class Sync {
 
     public void setUnplannedEntries(Crud<Event> unplannedEntries) {
         this.unplanned = unplannedEntries;
+    }
+
+    public Crud<Assignment> getAssignments() {
+        return assignments;
     }
 }

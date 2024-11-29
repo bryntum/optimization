@@ -85,6 +85,17 @@ const useSchedulerProConfig = (onSolve, onReset) => {
             }
         },
 
+        eventDragFeature : {
+            // Validation method, called as you drag events around in the schedule
+            validatorFn({ eventRecords, newResource, startDate }) {
+                const
+                    task  = eventRecords[0],
+                    valid = newResource.canPerformTask(task, startDate);
+
+                return valid;
+            }
+        },
+
         tools : {
             scoreLabel : {
                 weight : 300,

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.optazen.skillmatch.api.Crud;
 import com.optazen.skillmatch.api.Data;
 import com.optazen.skillmatch.api.Sync;
+import com.optazen.skillmatch.api.Assignment;
 import com.optazen.skillmatch.bootstrap.StartupInitializer;
 import com.optazen.skillmatch.domain.Event;
 import com.optazen.skillmatch.domain.Resource;
@@ -69,19 +70,28 @@ public class ApiResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response sync(Sync sync) {
-        boolean allSucceded = true;
+        boolean allSucceeded = true;
         List<Event> unplannedEvents = new ArrayList<>();
         List<Event> addedEvents = new ArrayList<>();
+        List<Assignment> addedAssignments = new ArrayList<>();
+
+        Crud<Assignment> assignments = sync.getAssignments();
+        if (assignments != null) {
+            allSucceeded &= assignments.getUpdated().stream().allMatch(assignment -> dataRepository.update(assignment));
+            allSucceeded &= assignments.getRemoved().stream().allMatch(assignment -> dataRepository.deleteAssignment(assignment.getEventId()));
+            addedAssignments = assignments.getAdded().stream().map(assignment -> dataRepository.addAssignment(assignment)).collect(Collectors.toList());
+        }
+
         Crud<Event> events = sync.getEvents();
         if (events != null) {
-            allSucceded &= events.getUpdated().stream().allMatch(event -> dataRepository.update(event));
-            allSucceded &= events.getRemoved().stream().allMatch(event -> dataRepository.deleteEvent(event.getId()));
+            allSucceeded &= events.getUpdated().stream().allMatch(event -> dataRepository.update(event));
+            allSucceeded &= events.getRemoved().stream().allMatch(event -> dataRepository.deleteEvent(event.getId()));
             addedEvents = events.getAdded().stream().map(event -> dataRepository.add(event)).toList();
         }
 
         Crud<Resource> resources = sync.getResources();
         if (resources != null) {
-            allSucceded &= resources.getUpdated().stream().allMatch(resource -> dataRepository.update(resource));
+            allSucceeded &= resources.getUpdated().stream().allMatch(resource -> dataRepository.update(resource));
             unplannedEvents = resources.getRemoved().stream().map(resource -> dataRepository.deleteResource(resource.getId())).flatMap(Collection::stream).toList();
             resources.getAdded().forEach(event -> logger.error("Adding Resources is not yet implemented"));
         }
@@ -89,11 +99,11 @@ public class ApiResource {
         Crud<Event> unplanned = sync.getUnplanned();
         if (unplanned != null) {
             unplannedEvents = unplanned.getAdded().stream().map(event -> dataRepository.addUnplanned(event)).toList();  
-            allSucceded &= unplanned.getRemoved().stream().allMatch(event -> dataRepository.deleteUnplanned(event.getId()));
+            allSucceeded &= unplanned.getRemoved().stream().allMatch(event -> dataRepository.deleteUnplanned(event.getId()));
         }
 
         Map<String, Object> jsonResponseObject = new HashMap<>();
-        jsonResponseObject.put("success", allSucceded);
+        jsonResponseObject.put("success", allSucceeded);
         jsonResponseObject.put("requestId", sync.getRequestId());
 
         if (!unplannedEvents.isEmpty()) {
@@ -110,9 +120,23 @@ public class ApiResource {
                             .collect(Collectors.toList())));
         }
 
+        // From the Solver's perspective, it does not matter if we have assignments object separately or not
+        // This is just to suppress the validateSyncResponse warning
+        if (!addedAssignments.isEmpty()) {
+            jsonResponseObject.put("assignments", Collections.singletonMap("rows",
+                    addedAssignments.stream()
+                            .map(assignment -> {
+                                Map<String, Object> assignmentMap = new HashMap<>();
+                                assignmentMap.put("$PhantomId", assignment.get$PhantomId());
+                                assignmentMap.put("id", assignment.getId());
+                                return assignmentMap;
+                            })
+                            .collect(Collectors.toList())));
+        }
+
         jsonResponseObject.put("scoreAnalysis", scoreAnalysisService.analysis(dataRepository.solution().orElseThrow().getSchedule()));
 
-        return allSucceded ? Response.ok(jsonResponseObject).build() : Response.serverError().build();
+        return allSucceeded ? Response.ok(jsonResponseObject).build() : Response.serverError().build();
     }
 
     private Map<String, Object> createSection(String phantomId, String id) {

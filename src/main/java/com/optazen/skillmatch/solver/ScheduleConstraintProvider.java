@@ -48,7 +48,7 @@ public class ScheduleConstraintProvider implements ConstraintProvider {
     protected Constraint early(ConstraintFactory constraintFactory) {
         return constraintFactory.forEach(Event.class)
                 .join(ConstraintParameters.class)
-                .penalize(HardMediumSoftScore.ofSoft(1), (event, constraintParameters) -> Math.toIntExact(ChronoUnit.HOURS.between(LocalDateTime.of(constraintParameters.startDate(), constraintParameters.startTime()), event.getStartDate())))
+                .penalize(HardMediumSoftScore.ofSoft(1), (event, constraintParameters) -> Math.max(0, Math.toIntExact(ChronoUnit.HOURS.between(LocalDateTime.of(constraintParameters.startDate(), constraintParameters.startTime()), event.getStartDate()))))
                 .asConstraint("Early");
     }
 
