@@ -198,7 +198,9 @@ const useSchedulerProConfig = (onSolve, onReset, showAddTechnicianForm) => {
             }
         },
 
-        eventRenderer({ eventRecord }) {
+        eventRenderer({ eventRecord, renderData }) {
+            const { background, text } = eventRecord.getColorByLicensePlate();
+            renderData.style = `background-color: ${background}; color: ${text}`;
             return `
                 <div>
                     <div class="b-event-header">
@@ -210,7 +212,7 @@ const useSchedulerProConfig = (onSolve, onReset, showAddTechnicianForm) => {
                         ${eventRecord.manuallyScheduled ? '<div class="manually-scheduled"><i class="b-fa b-fa-map-pin"></i></div>' : ''}
                     </div>
                 </div>
-            `
+            `;
         }
     }
 };
