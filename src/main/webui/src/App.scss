@@ -35,6 +35,36 @@
     padding: 0.25em 0;
 }
 
+.ping-circle {
+    position: relative;
+    overflow: visible;
+}
+
+.ping-circle.animated::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50px;
+    height: 50px;
+    transform: translate(-50%, -50%);
+    border: 2px solid rgba(0, 128, 255, 0.5);
+    border-radius: 50%;
+    animation: ping 1.5s ease-out;
+    animation-iteration-count: 2;
+}
+
+@keyframes ping {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(2.5);
+        opacity: 0;
+    }
+}
+
 .b-resource-info {
     .b-resource-avatar {
         margin-inline : .4em 1em;

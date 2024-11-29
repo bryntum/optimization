@@ -117,7 +117,8 @@ const useSchedulerProConfig = (onSolve, onReset, showAddTechnicianForm) => {
                 text     : 'Solve',
                 ref      : 'solveButton',
                 icon     : 'b-icon b-fa-wand-magic-sparkles',
-                cls      : 'b-transparent',
+                cls      : 'b-raised ping-circle',
+                color    : 'b-blue',
                 tooltip  : 'Tries to fit the unplanned events into the currently displayed timeframe',
                 onAction : () => {
                     onSolve()

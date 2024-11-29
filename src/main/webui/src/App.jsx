@@ -60,6 +60,15 @@ function App() {
         } 
         else { // isSolving === 'pending'
             schedulerPro.tools.solveButton.icon = 'b-fa b-fa-wand-magic-sparkles'
+            function triggerPingAnimation(button) {
+                const buttonEl = button.element;
+                buttonEl.classList.add('animated');
+
+                setTimeout(() => {
+                    buttonEl.classList.remove('animated');
+                }, 3000); // 1.5s * 2 iterations = 3s
+            }
+            triggerPingAnimation(schedulerPro.tools.solveButton);
         }
 
         () => {
