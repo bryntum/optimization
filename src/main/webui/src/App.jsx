@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { BryntumDemoHeader, BryntumGrid, BryntumSchedulerPro, BryntumSplitter } from "@bryntum/schedulerpro-react";
-import { Mask } from "@bryntum/schedulerpro";
+import { Mask, Popup } from "@bryntum/schedulerpro";
 
 import { useSchedulerProConfig, useUnplannedGridConfig } from "./AppConfig";
 import Task from "./lib/Task.js";
@@ -17,6 +17,7 @@ function App() {
     const schedulerProRef = useRef();
     const unplannedGridRef = useRef();
     const dragRef = useRef();
+    const addTechnicianPopup = useRef();
 
     const [schedulerPro, setSchedulerPro] = useState();
     const [solveStatus, setSolveStatus] = useState('pending'); // Can be 'pending', 'solving', or 'finished'
@@ -93,7 +94,10 @@ function App() {
         setSolveStatus('pending');
     };
 
-    const schedulerProConfig = useSchedulerProConfig(onSolve, onReset)
+
+    const schedulerProConfig = useSchedulerProConfig(onSolve, onReset, () => {
+        addTechnicianPopup.current?.show()
+    });
     const unplannedGridConfig = useUnplannedGridConfig(onAddRandomTasks)
 
     const [isProjectLoaded, setIsProjectLoaded] = useState(false);
@@ -199,7 +203,6 @@ function App() {
     // Skills combo in the event editor needs the list of skills from backend which we set here
     useEffect(() => {
         if (!schedulerPro || !isProjectLoaded) return;
-
         schedulerPro.features.taskEdit.items.generalTab.items.skillField.store = schedulerPro.project.getCrudStore('skills');
     }, [schedulerPro, isProjectLoaded])
 
@@ -219,6 +222,65 @@ function App() {
             setScore(response.scoreAnalysis.score);
         });
     }, [schedulerPro])
+
+    // Add Technician Popup
+    useEffect(() => {
+        if (!schedulerPro || !isProjectLoaded) return;
+
+        const popup = new Popup({
+            title: 'New Technician',
+            autoShow: false,
+            hidden: true,
+            centered: true,
+            width: '30em',
+            modal: {
+                closeOnMaskTap: true,
+            },
+            items: [
+                {
+                    type: 'text',
+                    label: 'Name',
+                    name: 'name',
+                    required: true
+                },
+                {
+                    type: 'combo',
+                    ref : 'skillField',
+                    idField      : 'id',
+                    displayField : 'name',
+                    label        : 'Skills',
+                    name         : 'skills',
+                    multiSelect: true,
+                }
+            ],
+            bbar: {
+                items: {
+                    submit: {
+                        text: 'Add',
+                        onAction: () => {
+                            const values = popup.getValues();
+                            schedulerPro.project.getCrudStore('resources').add({
+                                name: values.name,
+                                skills: values.skills,
+                                type: "Technicians",
+                                calendar: "dayshift",
+                            });
+                            popup.hide();
+                        } 
+                    }
+                }
+            }
+
+        }) 
+        // Add Technician Popup needs the list of skills from backend which we set here
+        popup.widgetMap.skillField.items = schedulerPro.project.getCrudStore('skills');
+
+        addTechnicianPopup.current = popup;
+        
+        return () => {
+            popup.destroy();
+        }
+    }, [schedulerPro, isProjectLoaded])
 
     return (
         <>

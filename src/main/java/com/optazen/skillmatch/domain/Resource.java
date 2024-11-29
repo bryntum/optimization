@@ -4,6 +4,8 @@ import ai.timefold.solver.core.api.domain.lookup.PlanningId;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Resource {
     @PlanningId
     private int id;
@@ -14,6 +16,9 @@ public class Resource {
     private String image;
     private String eventColor;
     private List<Integer> skills;
+
+    @JsonProperty("$PhantomId")
+    private String $PhantomId;
 
     public Resource() {
     }
@@ -80,6 +85,14 @@ public class Resource {
 
     public void setEventColor(String eventColor) {
         this.eventColor = eventColor;
+    }
+
+    public String get$PhantomId() {
+        return $PhantomId;
+    }
+
+    public void set$PhantomId(String $PhantomId) {
+        this.$PhantomId = $PhantomId;
     }
 
     @Override

@@ -30,8 +30,15 @@ public class DataRepository {
 
     public Data update(Data data) {
         this.data = data;
-        Optional<Integer> max = Stream.concat(data.getEvents().getRows().stream(), data.getUnplanned().getRows().stream()).map(Event::getId).max(Integer::compareTo);
-        counter = new AtomicInteger(max.map(i -> i + 1).orElse(0));
+        // Update counter to include resource IDs
+        Optional<Integer> maxEventId = Stream.concat(data.getEvents().getRows().stream(), data.getUnplanned().getRows().stream())
+            .map(Event::getId).max(Integer::compareTo);
+        Optional<Integer> maxResourceId = data.getResources().getRows().stream()
+            .map(Resource::getId).max(Integer::compareTo);
+        Optional<Integer> maxId = Stream.of(maxEventId, maxResourceId)
+            .filter(Optional::isPresent).map(Optional::get)
+            .max(Integer::compareTo);
+        counter = new AtomicInteger(maxId.map(i -> i + 1).orElse(0));
         this.data.setScoreAnalysis(scoreAnalysisService.analysis(data.getSchedule()));
         return data;
     }
@@ -165,5 +172,11 @@ public class DataRepository {
         } else {
             return null;
         }
+    }
+
+    public Resource addResource(Resource resource) {
+        resource.setId(counter.getAndIncrement());
+        data.getResources().getRows().add(resource);
+        return resource;
     }
 }

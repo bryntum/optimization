@@ -74,6 +74,7 @@ public class ApiResource {
         List<Event> unplannedEvents = new ArrayList<>();
         List<Event> addedEvents = new ArrayList<>();
         List<Assignment> addedAssignments = new ArrayList<>();
+        List<Map<String, Object>> addedResourcesResponse = new ArrayList<>();
 
         Crud<Assignment> assignments = sync.getAssignments();
         if (assignments != null) {
@@ -93,7 +94,15 @@ public class ApiResource {
         if (resources != null) {
             allSucceeded &= resources.getUpdated().stream().allMatch(resource -> dataRepository.update(resource));
             unplannedEvents = resources.getRemoved().stream().map(resource -> dataRepository.deleteResource(resource.getId())).flatMap(Collection::stream).toList();
-            resources.getAdded().forEach(event -> logger.error("Adding Resources is not yet implemented"));
+
+            for (Resource resource : resources.getAdded()) {
+                Resource addedResource = dataRepository.addResource(resource);
+                Map<String, Object> resourceMap = objectMapper.convertValue(addedResource, Map.class);
+                if (resource.get$PhantomId() != null) {
+                    resourceMap.put("$PhantomId", resource.get$PhantomId());
+                }
+                addedResourcesResponse.add(resourceMap);
+            }
         }
 
         Crud<Event> unplanned = sync.getUnplanned();
@@ -118,6 +127,10 @@ public class ApiResource {
                     addedEvents.stream()
                             .map(event -> objectMapper.convertValue(event, Map.class))
                             .collect(Collectors.toList())));
+        }
+
+        if (!addedResourcesResponse.isEmpty()) {
+            jsonResponseObject.put("resources", Collections.singletonMap("rows", addedResourcesResponse));
         }
 
         // From the Solver's perspective, it does not matter if we have assignments object separately or not

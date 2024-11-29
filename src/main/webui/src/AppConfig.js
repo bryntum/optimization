@@ -3,7 +3,7 @@ import { StringHelper, DateHelper } from "@bryntum/schedulerpro";
 /**
  * Application configuration
  */
-const useSchedulerProConfig = (onSolve, onReset) => {
+const useSchedulerProConfig = (onSolve, onReset, showAddTechnicianForm) => {
     return {
         startDate : new Date(2024, 10, 4),
         endDate   : new Date(2024, 10, 9),
@@ -151,10 +151,18 @@ const useSchedulerProConfig = (onSolve, onReset) => {
         columns: [
             {
                 type           : 'resourceInfo',
-                text           : 'Staff',
+                text           : 'Technicians',
                 width          : 300,
                 showEventCount : false,
-                // Show skills each technician has
+                headerWidgets : [
+                    {
+                        type    : 'button',
+                        tooltip : 'Add Technician',
+                        icon    : 'b-fa b-fa-plus',
+                        cls     : 'b-transparent',
+                        onAction : showAddTechnicianForm
+                    }
+                ],
                 showMeta(resourceRecord) {
                     const
                         { skillNames, role }   = resourceRecord,
