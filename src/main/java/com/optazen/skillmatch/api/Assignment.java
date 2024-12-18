@@ -1,27 +1,30 @@
 package com.optazen.skillmatch.api;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Assignment {
-    private int id;
-    private String $PhantomId;
+    private String id;
+    @JsonProperty("$PhantomId")
+    private String phantomId;
     private int eventId;
     private int resourceId;
 
     public Assignment() {
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public String get$PhantomId() {
-        return $PhantomId;
+    public String getPhantomId() {
+        return phantomId;
     }
 
-    public void set$PhantomId(String $PhantomId) {
-        this.$PhantomId = $PhantomId;
+    public void setPhantomId(String phantomId) {
+        this.phantomId = phantomId;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

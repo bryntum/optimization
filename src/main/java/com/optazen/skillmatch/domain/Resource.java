@@ -18,7 +18,7 @@ public class Resource {
     private List<Integer> skills;
 
     @JsonProperty("$PhantomId")
-    private String $PhantomId;
+    private String phantomId;
 
     public Resource() {
     }
@@ -87,12 +87,12 @@ public class Resource {
         this.eventColor = eventColor;
     }
 
-    public String get$PhantomId() {
-        return $PhantomId;
+    public String getPhantomId() {
+        return phantomId;
     }
 
-    public void set$PhantomId(String $PhantomId) {
-        this.$PhantomId = $PhantomId;
+    public void setPhantomId(String phantomId) {
+        this.phantomId = phantomId;
     }
 
     @Override

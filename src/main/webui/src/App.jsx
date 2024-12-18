@@ -153,6 +153,8 @@ function App() {
             const wsProtocol = protocol === 'https:' ? 'wss' : 'ws';
             const wsPort = port ? `:${port}` : '';
             const socket = new WebSocket(`${wsProtocol}://${hostname}${wsPort}/timefold`)
+            //TODO: Add scheduleId unique UUID as query param - see next line as an example
+            //const socket = new WebSocket(`${wsProtocol}://${hostname}${wsPort}/timefold?scheduleId=1c0fdc09-ec8c-43c4-a084-9ad94a8fd359`)
 
             // Connection opened
             socket.addEventListener("open", event => {

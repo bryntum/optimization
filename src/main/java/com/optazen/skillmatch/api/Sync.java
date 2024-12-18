@@ -57,4 +57,8 @@ public class Sync {
     public Crud<Assignment> getAssignments() {
         return assignments;
     }
+
+    public void setAssignments(Crud<Assignment> assignments) {
+        this.assignments = assignments;
+    }
 }
