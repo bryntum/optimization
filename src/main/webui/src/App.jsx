@@ -1,4 +1,5 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
+import { v4 as uuidv4 } from 'uuid';
 import { BryntumDemoHeader, BryntumGrid, BryntumSchedulerPro, BryntumSplitter } from "@bryntum/schedulerpro-react";
 import { Mask, Popup } from "@bryntum/schedulerpro";
 
@@ -14,6 +15,17 @@ import "./App.scss";
 import timefoldNegativeLogo from '../public/timefold-logomark-negative.svg';
 
 function App() {
+    // Generate or retrieve the session UUID
+    const scheduleId = useMemo(() => {
+        let id = sessionStorage.getItem('scheduleId');
+        if (!id) {
+            id = uuidv4();
+            sessionStorage.setItem('scheduleId', id);
+        }
+        return id;
+    }, []);
+    const withScheduleId = (url) => `${url}${url.includes('?') ? '&' : '?'}scheduleId=${scheduleId}`;
+
     const schedulerProRef = useRef();
     const unplannedGridRef = useRef();
     const dragRef = useRef();
@@ -32,7 +44,7 @@ function App() {
         if (!schedulerPro) return;
 
         setSolveStatus('solving');
-        const response = await fetch('api/solve', {
+        const response = await fetch(withScheduleId('api/solve'), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -78,7 +90,7 @@ function App() {
 
     const onReset = async () => { 
         if (!schedulerPro) return;
-        const response = await fetch('api/reset', {
+        const response = await fetch(withScheduleId('api/reset'), {
             method: 'POST'
         })
         if (!response.ok) {
@@ -111,10 +123,9 @@ function App() {
 
     const [isProjectLoaded, setIsProjectLoaded] = useState(false);
     const [projectConfig] = useState({
-        autoLoad: true,
         autoSync: true,
-        loadUrl: 'api/read',
-        syncUrl: 'api/sync',
+        loadUrl: withScheduleId('api/read'),
+        syncUrl: withScheduleId('api/sync'),
         resourceStore: {
             modelClass: Technician,
             sorters: [{field: 'name', ascending: true}]
@@ -143,7 +154,7 @@ function App() {
         onReset();
     }, [])
 
-    // Setup websocket as soon as schedulerPro is available
+    // Setup websocket as soon as schedulerPro is available then load initial data
     // We use websocket to get updates from the server when solving
     useEffect(() => {
         const openWebsocket = async() => { 
@@ -152,13 +163,12 @@ function App() {
             const { protocol, hostname, port } = window.location;
             const wsProtocol = protocol === 'https:' ? 'wss' : 'ws';
             const wsPort = port ? `:${port}` : '';
-            const socket = new WebSocket(`${wsProtocol}://${hostname}${wsPort}/timefold`)
-            //TODO: Add scheduleId unique UUID as query param - see next line as an example
-            //const socket = new WebSocket(`${wsProtocol}://${hostname}${wsPort}/timefold?scheduleId=1c0fdc09-ec8c-43c4-a084-9ad94a8fd359`)
+            const socket = new WebSocket(`${wsProtocol}://${hostname}${wsPort}/timefold?scheduleId=${scheduleId}`)
 
             // Connection opened
             socket.addEventListener("open", event => {
                 console.log("Connected with websocket")
+                schedulerPro.project.load() // Initial data load
             });
 
             // Listen for messages
@@ -250,6 +260,7 @@ function App() {
             items: [
                 {
                     type: 'text',
+                    ref : 'nameField',
                     label: 'Name',
                     name: 'name',
                     required: true
@@ -276,6 +287,8 @@ function App() {
                                 type: "Technicians",
                                 calendar: "dayshift",
                             });
+                            popup.widgetMap.skillField.clear();
+                            popup.widgetMap.nameField.clear();
                             popup.hide();
                         } 
                     }
